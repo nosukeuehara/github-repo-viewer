@@ -1,4 +1,4 @@
-import {searchRepositories} from "@/infra/githubRepositoryApi";
+import {searchRepositories} from "@/infra/gateway/searchRepositoryGateway";
 import {RepositoryListPresentation} from "./RepositorySearchResultListPresentation";
 
 interface Props {

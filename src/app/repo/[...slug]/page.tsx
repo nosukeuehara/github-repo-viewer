@@ -1,8 +1,11 @@
-export default function RepositoryPage() {
-  return (
-    <div>
-      <h1>Repository Details</h1>
-      {/* Repository details will be displayed here */}
-    </div>
-  );
+import {RepositoryDetail} from "@/template/RepositoryDetailTemplate/RepositoryDetailTemplate";
+
+type Params = Promise<{slug: string[]}>;
+
+export default async function Page(props: {params: Params}) {
+  const {slug} = await props.params;
+
+  const [owner, repo] = slug;
+
+  return <RepositoryDetail owner={owner} repo={repo} />;
 }
