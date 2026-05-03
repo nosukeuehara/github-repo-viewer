@@ -1,6 +1,5 @@
 import {render, screen} from "@testing-library/react";
 import {RepositoryListPresentation} from "./RepositorySearchResultListPresentation";
-import "@testing-library/jest-dom/vitest";
 
 const repositories = [
   {
