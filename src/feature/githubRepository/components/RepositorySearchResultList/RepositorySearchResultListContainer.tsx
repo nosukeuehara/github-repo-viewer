@@ -1,4 +1,4 @@
-import {searchRepositories} from "@/infra/gateway/searchRepositoryGateway";
+import {getRepositories} from "@/infra/gateway/getRepositories";
 import {RepositoryListPresentation} from "./RepositorySearchResultListPresentation";
 
 interface Props {
@@ -6,7 +6,7 @@ interface Props {
 }
 
 export async function RepositorySearchResultListContainer(props: Props) {
-  const repositories = await searchRepositories(props.query);
+  const repositories = await getRepositories(props.query);
 
   return (
     <RepositoryListPresentation

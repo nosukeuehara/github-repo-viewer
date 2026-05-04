@@ -2,7 +2,7 @@ import {ZodError} from "zod";
 import {repositorySchema} from "@/feature/githubRepository/schemas/repositorySchema";
 import {fetchGitHubRepositories} from "../githubApiClient";
 
-export async function searchRepositories(query?: string) {
+export async function getRepositories(query?: string) {
   if (!query) return [];
 
   const data = await fetchGitHubRepositories(query);

@@ -1,6 +1,6 @@
-import {githubRepositoryDetail} from "@/infra/gateway/repositoryDetailGateway";
+import {githubRepositoryDetail} from "@/infra/gateway/getRepositoryDetail";
 import {RepositoryDetailPresentation} from "./RepositoryDetailPresentation";
-import {githubRepositoryLanguages} from "@/infra/gateway/repositoryLanguagesGateway";
+import {getRepositoryLanguages} from "@/infra/gateway/getRepositoryLanguages";
 
 type Props = {
   owner: string;
@@ -10,7 +10,7 @@ type Props = {
 export async function RepositoryDetailContainer({owner, repo}: Props) {
   const [repositoryDetail, languages] = await Promise.all([
     githubRepositoryDetail(owner, repo),
-    githubRepositoryLanguages(owner, repo),
+    getRepositoryLanguages(owner, repo),
   ]);
   return (
     <RepositoryDetailPresentation
