@@ -1,3 +1,5 @@
+import "server-only";
+
 import {githubRepositoryDetail} from "@/infra/gateway/getRepositoryDetail";
 import {RepositoryDetailPresentation} from "./RepositoryDetailPresentation";
 import {getRepositoryLanguages} from "@/infra/gateway/getRepositoryLanguages";

@@ -1,3 +1,4 @@
+import "server-only";
 import {RepositorySearchFormPresentation} from "@/feature/githubRepository/components/RepositorySearchFrom";
 import {RepositorySearchResultListContainer} from "@/feature/githubRepository/components/RepositorySearchResultList/RepositorySearchResultListContainer";
 import {Suspense} from "react";

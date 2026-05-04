@@ -7,13 +7,18 @@ import {
   CardDescription,
   CardTitle,
 } from "@/shared/shadcn/components/ui/card";
+import {cn} from "@/shared/lib/utils";
 
 type Props = {
   query?: string;
   repositories: Repository[];
 };
 
-export function RepositoryListPresentation({query, repositories}: Props) {
+export function RepositoryListPresentation({
+  query,
+  repositories,
+  className,
+}: Props & {className?: string}) {
   if (query === undefined) return null;
 
   if (repositories.length === 0) {
@@ -25,9 +30,7 @@ export function RepositoryListPresentation({query, repositories}: Props) {
   }
 
   return (
-    <div className="space-y-4">
-      <h2 className="text-lg font-semibold">{`検索結果 ： "${query}"`}</h2>
-
+    <div className={cn(className, "space-y-4")}>
       <ul className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
         {repositories.map((repo) => (
           <li key={repo.id}>
