@@ -32,7 +32,7 @@ export function RepositoryListPresentation({query, repositories}: Props) {
         {repositories.map((repo) => (
           <li key={repo.id}>
             <Link href={`/repo/${repo.full_name}`} className="block">
-              <Card className="transition hover:bg-muted/50 hover:shadow-sm">
+              <Card className="transition hover:bg-muted/50 hover:shadow-sm rounded-xs">
                 <CardContent className="flex items-center gap-4 p-4">
                   <Image
                     src={repo.owner.avatar_url}
