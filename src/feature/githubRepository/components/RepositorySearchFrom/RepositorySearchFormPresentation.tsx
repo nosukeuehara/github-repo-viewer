@@ -4,11 +4,11 @@ import {zodResolver} from "@hookform/resolvers/zod";
 import {useForm} from "react-hook-form";
 import {useRouter} from "next/navigation";
 import {useTransition} from "react";
-import {Button} from "@/shared/components/ui/button";
-import {Input} from "@/shared/components/ui/input";
-import {Field, FieldDescription} from "@/shared/components/ui/field";
 import {SearchRepoParams} from "../../types";
 import {searchParamsSchema} from "../../schemas/searchParams";
+import {Field, FieldDescription} from "@/shared/shadcn/components/ui/field";
+import {Input} from "@/shared/shadcn/components/ui/input";
+import {Button} from "@/shared/shadcn/components/ui/button";
 
 type Props = {
   defaultQuery?: string;

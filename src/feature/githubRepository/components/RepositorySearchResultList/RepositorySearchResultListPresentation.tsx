@@ -6,7 +6,7 @@ import {
   CardContent,
   CardDescription,
   CardTitle,
-} from "@/shared/components/ui/card";
+} from "@/shared/shadcn/components/ui/card";
 
 type Props = {
   query?: string;

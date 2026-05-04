@@ -1,7 +1,8 @@
 import {render, screen} from "@testing-library/react";
 import {RepositoryDetailPresentation} from "./RepositoryDetailPresentation";
+import type {RepositoryDetail, RepositoryLanguagesResponse} from "../../types";
 
-const mockData = {
+const mockRepoData: RepositoryDetail = {
   id: 123456,
   name: "test-repo",
   description: "This is a test repository.",
@@ -9,36 +10,50 @@ const mockData = {
   watchers_count: 22,
   forks_count: 10,
   open_issues_count: 5,
-  languages: "TypeScript",
   owner: {
     login: "test-user",
     avatar_url: "https://avatars.githubusercontent.com/u/123456?v=4",
   },
 };
 
+const mockLangData: RepositoryLanguagesResponse = {
+  TypeScript: 77468,
+  HTML: 3493,
+  CSS: 1725,
+  JavaScript: 915,
+};
+
 describe("RepositoryDetailPresentation", () => {
-  it("リポジトリの表示ができる", () => {
+  it("リポジトリ詳細を表示する", () => {
     render(
       <RepositoryDetailPresentation
-        id={mockData.id}
-        name={mockData.name}
-        description={mockData.description}
-        language={mockData.languages}
-        owner={mockData.owner}
-        stargazers_count={mockData.stargazers_count}
-        watchers_count={mockData.watchers_count}
-        forks_count={mockData.forks_count}
-        open_issues_count={mockData.open_issues_count}
+        repo={mockRepoData}
+        languages={mockLangData}
       />
     );
 
     expect(
-      screen.getByRole("heading", {name: /test-repo/})
+      screen.getByRole("heading", {name: "test-repo"})
     ).toBeInTheDocument();
-    expect(screen.getByText(/Language: TypeScript/)).toBeInTheDocument();
-    expect(screen.getByText(/Stars: 42/)).toBeInTheDocument();
-    expect(screen.getByText(/Watchers: 22/)).toBeInTheDocument();
-    expect(screen.getByText(/Forks: 10/)).toBeInTheDocument();
-    expect(screen.getByText(/Issues: 5/)).toBeInTheDocument();
+
+    expect(
+      screen.getByRole("img", {name: "test-user のアイコン"})
+    ).toBeInTheDocument();
+
+    expect(screen.getByText("This is a test repository.")).toBeInTheDocument();
+
+    expect(screen.getByText("TypeScript")).toBeInTheDocument();
+
+    expect(screen.getByText("Stars")).toBeInTheDocument();
+    expect(screen.getByText("42")).toBeInTheDocument();
+
+    expect(screen.getByText("Watchers")).toBeInTheDocument();
+    expect(screen.getByText("22")).toBeInTheDocument();
+
+    expect(screen.getByText("Forks")).toBeInTheDocument();
+    expect(screen.getByText("10")).toBeInTheDocument();
+
+    expect(screen.getByText("Issues")).toBeInTheDocument();
+    expect(screen.getByText("5")).toBeInTheDocument();
   });
 });
