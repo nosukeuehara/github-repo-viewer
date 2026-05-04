@@ -2,15 +2,21 @@ import {RepositorySearchFormPresentation} from "@/feature/githubRepository/compo
 import {RepositorySearchResultListContainer} from "@/feature/githubRepository/components/RepositorySearchResultList/RepositorySearchResultListContainer";
 import {Suspense} from "react";
 
-function RepositorySearchTemplate({param}: {param?: string}) {
+function RepositorySearchTemplate({
+  param,
+  page,
+}: {
+  param?: string;
+  page: number;
+}) {
   const query = param?.trim();
 
   return (
     <div>
       <RepositorySearchFormPresentation defaultQuery={query} className="mb-4" />
       {/* TODO : Loading用の画面を作成 */}
-      <Suspense key={query} fallback={<p>Loading...</p>}>
-        <RepositorySearchResultListContainer query={query} />
+      <Suspense key={`${query ?? ""}-${page}`} fallback={<p>Loading...</p>}>
+        <RepositorySearchResultListContainer query={param} page={page} />
       </Suspense>
     </div>
   );
