@@ -7,7 +7,7 @@ function RepositorySearchTemplate({param}: {param?: string}) {
 
   return (
     <div>
-      <RepositorySearchFormPresentation defaultQuery={query} />
+      <RepositorySearchFormPresentation defaultQuery={query} className="mb-4" />
       {/* TODO : Loading用の画面を作成 */}
       <Suspense key={query} fallback={<p>Loading...</p>}>
         <RepositorySearchResultListContainer query={query} />

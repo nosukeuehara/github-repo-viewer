@@ -1,3 +1,4 @@
+import {ZodError} from "zod";
 import {repositorySchema} from "@/feature/githubRepository/schemas/repositorySchema";
 import {fetchGitHubRepositories} from "../githubApiClient";
 
@@ -6,13 +7,13 @@ export async function searchRepositories(query?: string) {
 
   const data = await fetchGitHubRepositories(query);
 
-  const result = data.items.flatMap((repo) => {
-    return repositorySchema.safeParse(repo);
-  });
+  try {
+    return data.items.map((repo) => repositorySchema.parse(repo));
+  } catch (error) {
+    if (error instanceof ZodError) {
+      throw new Error("Repository search response is invalid");
+    }
 
-  if (result.some((r) => !r.success)) {
-    throw new Error("Repository search response is invalid");
+    throw error;
   }
-
-  return result.map((r) => r.data);
 }
