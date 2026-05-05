@@ -13,12 +13,12 @@ export function RepositoryPagination({
   query,
   currentPage,
   totalCount,
-  perPage = 10,
+  perPage,
 }: {
   query: string;
   currentPage: number;
   totalCount: number;
-  perPage?: number;
+  perPage: number;
 }) {
   const totalPages = Math.ceil(totalCount / perPage);
   const encodedQuery = encodeURIComponent(query);

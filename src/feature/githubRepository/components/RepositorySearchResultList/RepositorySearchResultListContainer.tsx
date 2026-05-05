@@ -7,13 +7,13 @@ import {RepositoryPagination} from "../Pagenation/PagenationPresentation";
 interface Props {
   query?: string;
   page?: number;
-  perPage?: number;
+  perPage: number;
 }
 
 export async function RepositorySearchResultListContainer({
   query,
   page = 1,
-  perPage = 12,
+  perPage,
 }: Props) {
   const {repositories, totalCount} = await getRepositories(
     query,

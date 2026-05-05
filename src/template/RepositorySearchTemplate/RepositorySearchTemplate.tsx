@@ -17,7 +17,11 @@ function RepositorySearchTemplate({
       <RepositorySearchFormPresentation defaultQuery={query} className="mb-4" />
       {/* TODO : Loading用の画面を作成 */}
       <Suspense key={`${query ?? ""}-${page}`} fallback={<p>Loading...</p>}>
-        <RepositorySearchResultListContainer query={param} page={page} />
+        <RepositorySearchResultListContainer
+          query={param}
+          page={page}
+          perPage={15}
+        />
       </Suspense>
     </div>
   );
