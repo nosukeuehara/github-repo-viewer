@@ -12,12 +12,18 @@ import {cn} from "@/shared/lib/utils";
 type Props = {
   query?: string;
   repositories: Repository[];
+  totalCount: number;
+  page: number;
+  perPage: number;
 };
 
 export function RepositoryListPresentation({
   query,
   repositories,
+  totalCount,
   className,
+  page,
+  perPage,
 }: Props & {className?: string}) {
   if (query === undefined) return null;
 
@@ -31,6 +37,15 @@ export function RepositoryListPresentation({
 
   return (
     <div className={cn(className, "space-y-4")}>
+      {query && (
+        <div className="space-y-2 mb-1">
+          <h2 className="text-lg font-semibold">{`検索結果 ： "${query}"`}</h2>
+          <p className="text-sm text-muted-foreground">
+            約 {totalCount.toLocaleString()} 件中 {(page - 1) * perPage + 1} -{" "}
+            {Math.min(page * perPage, totalCount)} 件を表示
+          </p>
+        </div>
+      )}
       <ul className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
         {repositories.map((repo) => (
           <li key={repo.id}>

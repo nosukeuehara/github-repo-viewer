@@ -1,48 +1,26 @@
-"use client";
-
-import {zodResolver} from "@hookform/resolvers/zod";
-import {useForm} from "react-hook-form";
-import {useRouter} from "next/navigation";
-import {useTransition} from "react";
+import {FieldErrors, UseFormRegister} from "react-hook-form";
 import {SearchRepoParams} from "../../types";
-import {searchParamsSchema} from "../../schemas/searchParams";
 import {Field, FieldDescription} from "@/shared/shadcn/components/ui/field";
 import {Input} from "@/shared/shadcn/components/ui/input";
 import {Button} from "@/shared/shadcn/components/ui/button";
 
 type Props = {
-  defaultQuery?: string;
+  register: UseFormRegister<SearchRepoParams>;
+  errors: FieldErrors<SearchRepoParams>;
+  onSubmit: () => void;
+  isPending: boolean;
+  className?: string;
 };
 
 export function RepositorySearchFormPresentation({
-  defaultQuery = "",
+  register,
+  errors,
+  onSubmit,
+  isPending,
   className,
-}: Props & {className?: string}) {
-  const router = useRouter();
-  const [isPending, startTransition] = useTransition();
-
-  const {
-    register,
-    handleSubmit,
-    formState: {errors},
-  } = useForm<SearchRepoParams>({
-    resolver: zodResolver(searchParamsSchema),
-    defaultValues: {
-      q: defaultQuery,
-    },
-  });
-
-  const onSubmit = (data: SearchRepoParams) => {
-    startTransition(() => {
-      router.push(`/search?q=${encodeURIComponent(data.q)}`);
-    });
-  };
-
+}: Props) {
   return (
-    <form
-      onSubmit={handleSubmit(onSubmit)}
-      className={`flex items-start gap-2 ${className}`}
-    >
+    <form onSubmit={onSubmit} className={`flex items-start gap-2 ${className}`}>
       <Field className="flex-1">
         <Input
           {...register("q")}
@@ -53,7 +31,7 @@ export function RepositorySearchFormPresentation({
         />
         <FieldDescription hidden={!errors.q?.message}>
           {errors.q?.message && (
-            <span className=" text-sm">{errors.q.message}</span>
+            <span className="text-sm">{errors.q.message}</span>
           )}
         </FieldDescription>
       </Field>

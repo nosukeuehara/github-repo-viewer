@@ -1,7 +1,7 @@
 import "server-only";
-import {RepositorySearchFormPresentation} from "@/feature/githubRepository/components/RepositorySearchFrom";
 import {RepositorySearchResultListContainer} from "@/feature/githubRepository/components/RepositorySearchResultList/RepositorySearchResultListContainer";
 import {Suspense} from "react";
+import {RepositorySearchFormContainer} from "@/feature/githubRepository/components/RepositorySearchFrom/RepositorySearchFormContainer";
 
 function RepositorySearchTemplate({
   param,
@@ -10,13 +10,11 @@ function RepositorySearchTemplate({
   param?: string;
   page: number;
 }) {
-  const query = param?.trim();
-
   return (
     <div>
-      <RepositorySearchFormPresentation defaultQuery={query} className="mb-4" />
+      <RepositorySearchFormContainer query={param} className="mb-4" />
       {/* TODO : Loading用の画面を作成 */}
-      <Suspense key={`${query ?? ""}-${page}`} fallback={<p>Loading...</p>}>
+      <Suspense key={`${param ?? ""}-${page}`} fallback={<p>Loading...</p>}>
         <RepositorySearchResultListContainer
           query={param}
           page={page}

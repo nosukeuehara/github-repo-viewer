@@ -9,31 +9,29 @@ import {cn} from "@/shared/lib/utils";
 const pageLinkClass =
   "inline-flex h-9 items-center justify-center rounded-md px-3 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground";
 
-export function RepositoryPagination({
-  query,
+export function PaginationPresentation({
   currentPage,
-  totalCount,
-  perPage,
+  pagination,
 }: {
-  query: string;
   currentPage: number;
-  totalCount: number;
-  perPage: number;
+  pagination: {
+    totalPages: number;
+    encodedQuery: string;
+    hasPreviousPage: boolean;
+    hasNextPage: boolean;
+    previousHref: string;
+    nextHref: string;
+    shouldShow: boolean;
+  };
 }) {
-  const totalPages = Math.ceil(totalCount / perPage);
-  const encodedQuery = encodeURIComponent(query);
-
-  if (totalPages <= 1) return null;
+  if (!pagination.shouldShow) return null;
 
   return (
     <Pagination>
       <PaginationContent>
-        {currentPage > 1 && (
+        {pagination.hasPreviousPage && (
           <PaginationItem>
-            <Link
-              href={`/search?q=${encodedQuery}&page=${currentPage - 1}`}
-              className={pageLinkClass}
-            >
+            <Link href={pagination.previousHref} className={pageLinkClass}>
               前へ
             </Link>
           </PaginationItem>
@@ -48,12 +46,9 @@ export function RepositoryPagination({
           </span>
         </PaginationItem>
 
-        {currentPage < totalPages && (
+        {pagination.hasNextPage && (
           <PaginationItem>
-            <Link
-              href={`/search?q=${encodedQuery}&page=${currentPage + 1}`}
-              className={pageLinkClass}
-            >
+            <Link href={pagination.nextHref} className={pageLinkClass}>
               次へ
             </Link>
           </PaginationItem>

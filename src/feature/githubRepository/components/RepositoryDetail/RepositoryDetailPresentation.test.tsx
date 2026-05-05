@@ -23,12 +23,32 @@ const mockLangData: RepositoryLanguagesResponse = {
   JavaScript: 915,
 };
 
+const mockStats = [
+  {
+    label: "Stars",
+    value: 42,
+  },
+  {
+    label: "Watchers",
+    value: 22,
+  },
+  {
+    label: "Forks",
+    value: 10,
+  },
+  {
+    label: "Issues",
+    value: 5,
+  },
+];
+
 describe("RepositoryDetailPresentation", () => {
   it("リポジトリ詳細を表示する", () => {
     render(
       <RepositoryDetailPresentation
         repo={mockRepoData}
         languages={mockLangData}
+        stats={mockStats}
       />
     );
 

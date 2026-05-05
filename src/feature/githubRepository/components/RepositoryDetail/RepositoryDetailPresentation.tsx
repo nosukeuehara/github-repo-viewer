@@ -7,11 +7,17 @@ type Props = {
   languages: RepositoryLanguagesResponse;
 };
 
-export function RepositoryDetailPresentation({repo, languages}: Props) {
+type RepoStats = {stats: Array<{label: string; value: number}>};
+
+export function RepositoryDetailPresentation({
+  repo,
+  languages,
+  stats,
+}: Props & RepoStats) {
   return (
     <section className="space-y-6">
       <RepositoryDetailHeader repo={repo} languages={languages} />
-      <RepositoryStats repo={repo} />
+      <RepositoryStats stats={stats} />
     </section>
   );
 }
@@ -39,17 +45,10 @@ function RepositoryDetailHeader({repo, languages}: Props) {
   );
 }
 
-function RepositoryStats({repo}: {repo: RepositoryDetail}) {
-  const stats = [
-    {label: "Stars", value: repo.stargazers_count},
-    {label: "Watchers", value: repo.watchers_count},
-    {label: "Forks", value: repo.forks_count},
-    {label: "Issues", value: repo.open_issues_count},
-  ];
-
+function RepositoryStats(props: RepoStats) {
   return (
     <dl className="grid grid-cols-2 gap-6 text-center sm:grid-cols-4">
-      {stats.map((stat) => (
+      {props.stats.map((stat) => (
         <div key={stat.label} className="space-y-2">
           <dt className="text-sm font-semibold">{stat.label}</dt>
           <dd className="text-sm text-muted-foreground">{stat.value}</dd>

@@ -16,7 +16,13 @@ const repositories = [
 describe("RepositoryListPresentation", () => {
   it("リポジトリ一覧を表示する", () => {
     render(
-      <RepositoryListPresentation query="react" repositories={repositories} />
+      <RepositoryListPresentation
+        query="react"
+        repositories={repositories}
+        totalCount={100}
+        page={1}
+        perPage={15}
+      />
     );
 
     expect(
@@ -34,7 +40,13 @@ describe("RepositoryListPresentation", () => {
 
   it("リポジトリが見つからない場合はメッセージを表示する", () => {
     render(
-      <RepositoryListPresentation query="unknown-repo" repositories={[]} />
+      <RepositoryListPresentation
+        query="unknown-repo"
+        repositories={[]}
+        totalCount={0}
+        page={1}
+        perPage={15}
+      />
     );
 
     expect(
