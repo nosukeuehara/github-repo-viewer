@@ -7,7 +7,7 @@ import {
 import {cn} from "@/shared/lib/utils";
 
 const pageLinkClass =
-  "inline-flex h-9 items-center justify-center rounded-md px-3 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground";
+  "inline-flex h-9 items-center justify-center rounded-md px-3 text-sm font-medium transition-colors";
 
 export function PaginationPresentation({
   currentPage,
@@ -32,7 +32,7 @@ export function PaginationPresentation({
         {pagination.hasPreviousPage && (
           <PaginationItem>
             <Link href={pagination.previousHref} className={pageLinkClass}>
-              前へ
+              Previous
             </Link>
           </PaginationItem>
         )}
@@ -40,7 +40,7 @@ export function PaginationPresentation({
         <PaginationItem>
           <span
             aria-current="page"
-            className={cn(pageLinkClass, "bg-accent text-accent-foreground")}
+            className={cn(pageLinkClass, "text-accent-foreground")}
           >
             {currentPage}
           </span>
@@ -49,7 +49,7 @@ export function PaginationPresentation({
         {pagination.hasNextPage && (
           <PaginationItem>
             <Link href={pagination.nextHref} className={pageLinkClass}>
-              次へ
+              Next
             </Link>
           </PaginationItem>
         )}
