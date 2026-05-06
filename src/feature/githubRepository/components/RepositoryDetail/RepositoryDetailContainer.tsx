@@ -1,9 +1,9 @@
 import "server-only";
 
-import {githubRepositoryDetail} from "@/infra/gateway/getRepositoryDetail";
 import {RepositoryDetailPresentation} from "./RepositoryDetailPresentation";
-import {getRepositoryLanguages} from "@/infra/gateway/getRepositoryLanguages";
+import {getRepositoryLanguages} from "@/infra/service/getRepositoryLanguages";
 import {buildRepositoryStats} from "@/shared/lib/utils";
+import {getRepositoryDetail} from "@/infra/service/getRepositoryDetail";
 
 type Props = {
   owner: string;
@@ -11,8 +11,9 @@ type Props = {
 };
 
 export async function RepositoryDetailContainer({owner, repo}: Props) {
+  await setTimeout(() => {}, 10000);
   const [repositoryDetail, languages] = await Promise.all([
-    githubRepositoryDetail(owner, repo),
+    getRepositoryDetail(owner, repo),
     getRepositoryLanguages(owner, repo),
   ]);
   const stats = buildRepositoryStats(repositoryDetail);

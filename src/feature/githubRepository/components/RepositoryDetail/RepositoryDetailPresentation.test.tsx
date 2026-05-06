@@ -60,7 +60,7 @@ describe("RepositoryDetailPresentation", () => {
       screen.getByRole("img", {name: "test-user のアイコン"})
     ).toBeInTheDocument();
 
-    expect(screen.getByText("This is a test repository.")).toBeInTheDocument();
+    expect(screen.getAllByText("This is a test repository.")).toHaveLength(2);
 
     expect(screen.getByText("TypeScript")).toBeInTheDocument();
 

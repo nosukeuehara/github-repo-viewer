@@ -8,10 +8,10 @@ export default function ErrorPage({
   error: Error & {status?: number};
   reset: () => void;
 }) {
-  const MESSAGE_SEARCH_PAGE = "Failed to load repositories";
+  const MESSAGE_REPO_DETAIL_PAGE = "Failed to load repository data";
   return (
     <ErrorPageRetry
-      displayMessage={MESSAGE_SEARCH_PAGE}
+      displayMessage={MESSAGE_REPO_DETAIL_PAGE}
       error={error}
       reset={reset}
     />
