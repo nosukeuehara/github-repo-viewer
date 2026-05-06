@@ -1,3 +1,5 @@
+import "server-only";
+
 import {buildRepositoryPagination} from "@/shared/lib/utils";
 import {PaginationPresentation} from "./PagenationPresentation";
 
