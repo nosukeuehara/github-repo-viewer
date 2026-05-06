@@ -40,4 +40,4 @@ export function buildRepositoryPagination({
   };
 }
 
-export const PER_PAGE = 15;
+export const PER_PAGE = 12;
