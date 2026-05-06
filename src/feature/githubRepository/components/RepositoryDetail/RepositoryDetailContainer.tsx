@@ -9,7 +9,6 @@ type Props = {
 };
 
 export async function RepositoryDetailContainer({owner, repo}: Props) {
-  await setTimeout(() => {}, 10000);
   const [repositoryDetail, languages] = await Promise.all([
     getRepositoryDetail(owner, repo),
     getRepositoryLanguages(owner, repo),
