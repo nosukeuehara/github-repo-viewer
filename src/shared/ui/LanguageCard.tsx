@@ -17,7 +17,7 @@ export function RepositoryLanguages({
   const hiddenLanguages = sortedLanguages.slice(5);
 
   return (
-    <div className="flex flex-wrap items-end gap-2">
+    <div className="flex flex-wrap items-end gap-x-2">
       {visibleLanguages.map(([lang, bytes], index) => {
         let sizeClass = "text-sm";
 

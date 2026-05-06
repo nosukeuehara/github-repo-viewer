@@ -36,23 +36,42 @@ function RepositoryDetailHeader({
   languages,
 }: RepositoryDetailHeaderProps) {
   return (
-    <div className="flex items-start gap-4">
-      <Image
-        src={repo.owner.avatar_url}
-        alt={`${repo.owner.login} のアイコン`}
-        width={100}
-        height={100}
-        className="rounded-full border"
-        priority
-      />
+    <div className="space-y-4">
+      <div className="flex items-start gap-4">
+        <Image
+          src={repo.owner.avatar_url}
+          alt={`${repo.owner.login} のアイコン`}
+          width={100}
+          height={100}
+          priority
+          className="
+            rounded-full border object-cover
+            w-16 h-16
+            sm:w-20 sm:h-20
+            md:w-24 md:h-24
+          "
+        />
 
-      <div className="space-y-2">
-        <h2 className="text-2xl font-semibold">{repo.name}</h2>
-        <RepositoryLanguages languages={languages} />
-        {repo.description && (
-          <p className="text-sm text-muted-foreground">{repo.description}</p>
-        )}
+        <div className="space-y-2 min-w-0">
+          <h2 className="text-xl font-semibold sm:text-2xl">{repo.name}</h2>
+
+          <RepositoryLanguages languages={languages} />
+
+          {/* PC表示 */}
+          {repo.description && (
+            <p className="hidden sm:block text-sm text-muted-foreground">
+              {repo.description}
+            </p>
+          )}
+        </div>
       </div>
+
+      {/* スマホ表示 */}
+      {repo.description && (
+        <p className="sm:hidden text-sm text-muted-foreground">
+          {repo.description}
+        </p>
+      )}
     </div>
   );
 }
