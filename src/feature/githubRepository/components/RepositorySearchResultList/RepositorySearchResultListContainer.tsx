@@ -1,5 +1,3 @@
-import "server-only";
-
 import {RepositoryListPresentation} from "./RepositorySearchResultListPresentation";
 import {Repository} from "../../types";
 

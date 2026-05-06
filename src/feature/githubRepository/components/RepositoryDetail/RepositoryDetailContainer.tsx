@@ -1,5 +1,3 @@
-import "server-only";
-
 import {RepositoryDetailPresentation} from "./RepositoryDetailPresentation";
 import {getRepositoryLanguages} from "@/infra/service/getRepositoryLanguages";
 import {buildRepositoryStats} from "@/shared/lib/utils";

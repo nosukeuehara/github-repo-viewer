@@ -1,4 +1,3 @@
-import "server-only";
 import {RepositoryDetailContainer} from "@/feature/githubRepository/components/RepositoryDetail/RepositoryDetailContainer";
 import {BackButton} from "@/shared/ui/BackButton";
 
