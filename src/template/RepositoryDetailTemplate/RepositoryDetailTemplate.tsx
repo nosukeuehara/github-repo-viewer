@@ -2,6 +2,7 @@ import "server-only";
 import {RepositoryDetailContainer} from "@/feature/githubRepository/components/RepositoryDetail/RepositoryDetailContainer";
 import {BackButton} from "@/shared/ui/BackButton";
 import {Suspense} from "react";
+import {RepositoryDetailSkeleton} from "@/shared/ui/RepositoryDetailSkeleton";
 
 type Props = {
   owner: string;
@@ -11,9 +12,7 @@ type Props = {
 function RepositoryDetailTemplate({owner, repo}: Props) {
   return (
     <div>
-      <Suspense key={owner + "/" + repo} fallback={<p>Loading...</p>}>
-        <RepositoryDetailContainer owner={owner} repo={repo} />
-      </Suspense>
+      <RepositoryDetailContainer owner={owner} repo={repo} />
 
       <div className="flex justify-center mt-6">
         <BackButton />

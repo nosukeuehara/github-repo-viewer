@@ -1,4 +1,5 @@
-// TODO : Loading画面をもう少し見栄えの良いものにする
+import RepositorySearchPageSkeleton from "@/shared/ui/RepositorySearchPageSkeleton";
+
 export default function Page() {
-  return <div>Loading...</div>;
+  return <RepositorySearchPageSkeleton />;
 }

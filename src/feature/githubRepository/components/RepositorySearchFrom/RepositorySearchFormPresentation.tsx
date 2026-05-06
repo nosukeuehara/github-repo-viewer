@@ -20,14 +20,17 @@ export function RepositorySearchFormPresentation({
   className,
 }: Props) {
   return (
-    <form onSubmit={onSubmit} className={`flex items-start gap-2 ${className}`}>
-      <Field className="flex-1">
+    <form
+      onSubmit={onSubmit}
+      className={`flex items-start gap-2 h-8 ${className}`}
+    >
+      <Field className="flex-1 h-full">
         <Input
           {...register("q")}
           inputMode="text"
           type="text"
           placeholder="リポジトリ名を入力"
-          className="px-2 w-full rounded-xs"
+          className="px-2 rounded-xs"
         />
         <FieldDescription hidden={!errors.q?.message}>
           {errors.q?.message && (
@@ -36,7 +39,11 @@ export function RepositorySearchFormPresentation({
         </FieldDescription>
       </Field>
 
-      <Button type="submit" disabled={isPending} className="w-[20%] rounded-xs">
+      <Button
+        type="submit"
+        disabled={isPending}
+        className="h-full w-[20%] rounded-xs"
+      >
         検索
       </Button>
     </form>
