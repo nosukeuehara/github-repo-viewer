@@ -1,26 +1,23 @@
 import "server-only";
 
-import {getRepositories} from "@/infra/gateway/getRepositories";
 import {RepositoryListPresentation} from "./RepositorySearchResultListPresentation";
-import {PagenationContainer} from "../Pagenation/PagenationContainer";
+import {Repository} from "../../types";
 
 interface Props {
   query?: string;
   page?: number;
   perPage: number;
+  repositories: Repository[];
+  totalCount: number;
 }
 
-export async function RepositorySearchResultListContainer({
+export function RepositorySearchResultListContainer({
   query,
   page = 1,
   perPage,
+  repositories,
+  totalCount,
 }: Props) {
-  const {repositories, totalCount} = await getRepositories(
-    query,
-    page,
-    perPage
-  );
-
   return (
     <div>
       <RepositoryListPresentation
@@ -31,16 +28,6 @@ export async function RepositorySearchResultListContainer({
         page={page}
         perPage={perPage}
       />
-
-      {query && (
-        <PagenationContainer
-          query={query}
-          currentPage={page}
-          totalCount={totalCount}
-          page={page}
-          perPage={15}
-        />
-      )}
     </div>
   );
 }

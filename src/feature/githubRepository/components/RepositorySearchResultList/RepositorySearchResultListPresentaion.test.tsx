@@ -1,5 +1,6 @@
 import {render, screen} from "@testing-library/react";
 import {RepositoryListPresentation} from "./RepositorySearchResultListPresentation";
+import {PER_PAGE} from "@/shared/lib/utils";
 
 const repositories = [
   {
@@ -21,7 +22,7 @@ describe("RepositoryListPresentation", () => {
         repositories={repositories}
         totalCount={100}
         page={1}
-        perPage={15}
+        perPage={PER_PAGE}
       />
     );
 
@@ -45,7 +46,7 @@ describe("RepositoryListPresentation", () => {
         repositories={[]}
         totalCount={0}
         page={1}
-        perPage={15}
+        perPage={PER_PAGE}
       />
     );
 

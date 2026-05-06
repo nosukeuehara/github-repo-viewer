@@ -1,8 +1,13 @@
 import {ZodError} from "zod";
 import {repositorySchema} from "@/feature/githubRepository/schemas/repositorySchema";
 import {fetchGitHubRepositories} from "../githubApiClient";
+import {PER_PAGE} from "@/shared/lib/utils";
 
-export async function getRepositories(query?: string, page = 1, perPage = 12) {
+export async function getRepositories(
+  query?: string,
+  page = 1,
+  perPage = PER_PAGE
+) {
   if (!query) {
     return {
       repositories: [],

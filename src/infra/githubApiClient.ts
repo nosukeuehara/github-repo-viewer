@@ -1,9 +1,11 @@
+import {PER_PAGE} from "@/shared/lib/utils";
+
 const GITHUB_API_BASE_URL = "https://api.github.com";
 
 export async function fetchGitHubRepositories(
   query: string,
   page: number,
-  perPage = 12
+  perPage = PER_PAGE
 ) {
   const params = new URLSearchParams({
     q: `${query} in:name`,
