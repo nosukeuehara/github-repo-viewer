@@ -2,18 +2,27 @@ import Image from "next/image";
 import {RepositoryDetail, RepositoryLanguagesResponse} from "../../types";
 import {RepositoryLanguages} from "@/shared/ui/LanguageCard";
 
-type Props = {
+type RepositoryStat = {
+  label: string;
+  value: number;
+};
+
+type RepositoryDetailPresentationProps = {
+  repo: RepositoryDetail;
+  languages: RepositoryLanguagesResponse;
+  stats: RepositoryStat[];
+};
+
+type RepositoryDetailHeaderProps = {
   repo: RepositoryDetail;
   languages: RepositoryLanguagesResponse;
 };
-
-type RepoStats = {stats: Array<{label: string; value: number}>};
 
 export function RepositoryDetailPresentation({
   repo,
   languages,
   stats,
-}: Props & RepoStats) {
+}: RepositoryDetailPresentationProps) {
   return (
     <section className="space-y-6">
       <RepositoryDetailHeader repo={repo} languages={languages} />
@@ -22,7 +31,10 @@ export function RepositoryDetailPresentation({
   );
 }
 
-function RepositoryDetailHeader({repo, languages}: Props) {
+function RepositoryDetailHeader({
+  repo,
+  languages,
+}: RepositoryDetailHeaderProps) {
   return (
     <div className="flex items-start gap-4">
       <Image
@@ -45,10 +57,10 @@ function RepositoryDetailHeader({repo, languages}: Props) {
   );
 }
 
-function RepositoryStats(props: RepoStats) {
+function RepositoryStats({stats}: {stats: Array<RepositoryStat>}) {
   return (
     <dl className="grid grid-cols-2 gap-6 text-center sm:grid-cols-4">
-      {props.stats.map((stat) => (
+      {stats.map((stat) => (
         <div key={stat.label} className="space-y-2">
           <dt className="text-sm font-semibold">{stat.label}</dt>
           <dd className="text-sm text-muted-foreground">{stat.value}</dd>
