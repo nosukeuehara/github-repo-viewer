@@ -2,7 +2,7 @@ import {RepositorySearchResultListContainer} from "@/feature/githubRepository/co
 import {Suspense} from "react";
 import {RepositorySearchFormContainer} from "@/feature/githubRepository/components/RepositorySearchFrom/RepositorySearchFormContainer";
 import RepositorySearchResultListSkeleton from "@/shared/ui/RepositorySearchResultList";
-import {PagenationContainer} from "@/feature/githubRepository/components/Pagenation/PagenationContainer";
+import {PaginationContainer} from "@/feature/githubRepository/components/Pagination/PaginationContainer";
 import {getRepositories} from "@/infra/service/getRepositories";
 import {PER_PAGE} from "@/shared/lib/utils";
 
@@ -34,7 +34,7 @@ async function RepositorySearchTemplate({
         />
       </Suspense>
       {param && (
-        <PagenationContainer
+        <PaginationContainer
           query={param}
           currentPage={page}
           totalCount={totalCount}

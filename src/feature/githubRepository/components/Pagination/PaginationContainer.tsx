@@ -1,7 +1,7 @@
 import {buildRepositoryPagination} from "@/shared/lib/utils";
-import {PaginationPresentation} from "./PagenationPresentation";
+import {PaginationPresentation} from "./PaginationPresentation";
 
-export function PagenationContainer(props: {
+export function PaginationContainer(props: {
   query: string;
   currentPage: number;
   totalCount: number;
