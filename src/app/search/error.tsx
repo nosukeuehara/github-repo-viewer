@@ -1,5 +1,5 @@
 "use client";
-import ErrorPageRetry from "@/template/ErrorPageRetry";
+import TemporaryErrorTemplate from "@/template/Error/TemporaryErrorTemplate";
 
 export default function ErrorPage({
   error,
@@ -8,12 +8,5 @@ export default function ErrorPage({
   error: Error & {status?: number};
   reset: () => void;
 }) {
-  const MESSAGE_SEARCH_PAGE = "Failed to load repositories";
-  return (
-    <ErrorPageRetry
-      displayMessage={MESSAGE_SEARCH_PAGE}
-      error={error}
-      reset={reset}
-    />
-  );
+  return <TemporaryErrorTemplate error={error} reset={reset} />;
 }

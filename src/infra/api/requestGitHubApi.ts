@@ -1,4 +1,5 @@
 import {AppError} from "../errors/AppError";
+import {APP_ERROR_MESSAGE} from "../errors/errorMessages";
 
 const GITHUB_API_BASE_URL = "https://api.github.com";
 
@@ -11,29 +12,27 @@ export async function requestGitHubApi<T>(path: string): Promise<T> {
   });
 
   if (!res.ok) {
+    // GitHub APIのHTTPステータスをアプリケーションエラーへ変換する
+    // スローされたAppErrorはNext.jsのerror.tsxで表示される
     switch (res.status) {
       case 404:
-        throw new AppError("Repository not found", 404, "NOT_FOUND");
+        throw new AppError(APP_ERROR_MESSAGE.NOT_FOUND, 404, "NOT_FOUND");
 
       case 403:
-        throw new AppError("GitHub API rate limit exceeded", 403, "RATE_LIMIT");
+        throw new AppError(APP_ERROR_MESSAGE.RATE_LIMIT, 403, "RATE_LIMIT");
 
       case 422:
-        throw new AppError("Invalid search query", 422, "BAD_REQUEST");
+        throw new AppError(APP_ERROR_MESSAGE.BAD_REQUEST, 422, "BAD_REQUEST");
 
       case 503:
         throw new AppError(
-          "GitHub API is temporarily unavailable",
+          APP_ERROR_MESSAGE.SERVICE_UNAVAILABLE,
           503,
           "SERVICE_UNAVAILABLE"
         );
 
       default:
-        throw new AppError(
-          "Unexpected GitHub API error",
-          res.status,
-          "UNKNOWN"
-        );
+        throw new AppError(APP_ERROR_MESSAGE.UNKNOWN, res.status, "UNKNOWN");
     }
   }
 
