@@ -1,4 +1,4 @@
-import {PER_PAGE} from "@/shared/lib/utils";
+import {PER_PAGE} from "@/feature/githubRepository/constants";
 import {requestGitHubApi} from "./requestGitHubApi";
 
 export async function fetchGitHubRepositories(

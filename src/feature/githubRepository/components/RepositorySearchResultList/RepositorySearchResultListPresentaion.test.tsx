@@ -1,6 +1,6 @@
 import {render, screen} from "@testing-library/react";
 import {RepositoryListPresentation} from "./RepositorySearchResultListPresentation";
-import {PER_PAGE} from "@/shared/lib/utils";
+import {PER_PAGE} from "@/feature/githubRepository/constants";
 
 const repositories = [
   {

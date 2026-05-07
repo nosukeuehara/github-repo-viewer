@@ -4,7 +4,7 @@ import {RepositorySearchFormContainer} from "@/feature/githubRepository/componen
 import RepositorySearchResultListSkeleton from "@/shared/ui/RepositorySearchResultList";
 import {PaginationContainer} from "@/feature/githubRepository/components/Pagination/PaginationContainer";
 import {getRepositories} from "@/infra/service/getRepositories";
-import {PER_PAGE} from "@/shared/lib/utils";
+import {PER_PAGE} from "@/feature/githubRepository/constants";
 
 async function RepositorySearchTemplate({
   param,

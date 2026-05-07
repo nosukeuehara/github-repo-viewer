@@ -39,5 +39,3 @@ export function buildRepositoryPagination({
     shouldShow: totalPages > 1,
   };
 }
-
-export const PER_PAGE = 12;
