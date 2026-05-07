@@ -1,1 +1,1 @@
-export * from "@/feature/githubRepository/components/RepositorySearchResultList/RepositorySearchResultListPresentation";
+export * from "./RepositorySearchResultListContainer";

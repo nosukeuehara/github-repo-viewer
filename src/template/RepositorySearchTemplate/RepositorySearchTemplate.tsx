@@ -1,8 +1,8 @@
-import {RepositorySearchResultListContainer} from "@/feature/githubRepository/components/RepositorySearchResultList/RepositorySearchResultListContainer";
 import {Suspense} from "react";
-import {RepositorySearchFormContainer} from "@/feature/githubRepository/components/RepositorySearchFrom/RepositorySearchFormContainer";
-import RepositorySearchResultListSkeleton from "@/shared/ui/RepositorySearchResultList";
-import {PaginationContainer} from "@/feature/githubRepository/components/Pagination/PaginationContainer";
+import {RepositorySearchFormContainer} from "@/feature/githubRepository/components/RepositorySearchFrom";
+import {RepositorySearchResultListContainer} from "@/feature/githubRepository/components/RepositorySearchResultList";
+import {PaginationContainer} from "@/feature/githubRepository/components/Pagination";
+import {RepositorySearchResultListSkeleton} from "@/shared/ui/RepositorySearchResultList";
 import {getRepositories} from "@/infra/service/getRepositories";
 import {PER_PAGE} from "@/feature/githubRepository/constants";
 

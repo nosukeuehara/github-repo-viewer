@@ -1,1 +1,1 @@
-export * from "@/feature/githubRepository/components/Pagination";
+export * from "./PaginationContainer";

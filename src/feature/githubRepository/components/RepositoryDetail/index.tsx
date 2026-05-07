@@ -1,1 +1,1 @@
-export * from "@/feature/githubRepository/components/RepositoryDetail";
+export * from "./RepositoryDetailContainer";

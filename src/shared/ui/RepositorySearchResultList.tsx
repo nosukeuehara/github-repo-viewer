@@ -1,6 +1,6 @@
 import {Skeleton} from "@/shared/shadcn/components/ui/skeleton";
 
-export default function RepositorySearchResultListSkeleton() {
+export function RepositorySearchResultListSkeleton() {
   return (
     <div>
       <div className="space-y-2 mb-1">

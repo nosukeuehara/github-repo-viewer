@@ -1,7 +1,7 @@
 import {Skeleton} from "@/shared/shadcn/components/ui/skeleton";
-import RepositorySearchResultListSkeleton from "./RepositorySearchResultList";
+import {RepositorySearchResultListSkeleton} from "./RepositorySearchResultList";
 
-export default function RepositorySearchPageSkeleton() {
+export function RepositorySearchPageSkeleton() {
   return (
     <div>
       <div className="flex gap-2 h-8 mb-4">

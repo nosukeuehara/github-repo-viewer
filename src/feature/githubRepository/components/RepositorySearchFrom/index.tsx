@@ -1,1 +1,1 @@
-export {RepositorySearchFormPresentation} from "@/feature/githubRepository/components/RepositorySearchFrom/RepositorySearchFormPresentation";
+export * from "./RepositorySearchFormContainer";

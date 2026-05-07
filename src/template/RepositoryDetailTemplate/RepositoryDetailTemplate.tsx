@@ -1,4 +1,4 @@
-import {RepositoryDetailContainer} from "@/feature/githubRepository/components/RepositoryDetail/RepositoryDetailContainer";
+import {RepositoryDetailContainer} from "@/feature/githubRepository/components/RepositoryDetail";
 import {BackButton} from "@/shared/ui/BackButton";
 
 type Props = {
