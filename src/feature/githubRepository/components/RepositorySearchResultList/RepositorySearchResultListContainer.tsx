@@ -1,21 +1,25 @@
+import {AppPagination} from "@/shared/ui/AppPagination";
 import {RepositoryListPresentation} from "./RepositorySearchResultListPresentation";
-import {Repository} from "../../types";
+import {getRepositories} from "@/infra/service/getRepositories";
+import {buildRepositoryPagination} from "./lib/buildRepositoryPagination";
 
 interface Props {
   query?: string;
   page?: number;
   perPage: number;
-  repositories: Repository[];
-  totalCount: number;
 }
 
-export function RepositorySearchResultListContainer({
+export async function RepositorySearchResultListContainer({
   query,
   page = 1,
   perPage,
-  repositories,
-  totalCount,
 }: Props) {
+  const {repositories, totalCount} = await getRepositories(
+    query,
+    page,
+    perPage
+  );
+
   return (
     <div>
       <RepositoryListPresentation
@@ -26,6 +30,17 @@ export function RepositorySearchResultListContainer({
         page={page}
         perPage={perPage}
       />
+      {query && (
+        <AppPagination
+          currentPage={page}
+          {...buildRepositoryPagination({
+            query,
+            currentPage: page,
+            totalCount,
+            perPage,
+          })}
+        />
+      )}
     </div>
   );
 }

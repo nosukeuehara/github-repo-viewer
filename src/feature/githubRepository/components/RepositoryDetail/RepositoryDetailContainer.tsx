@@ -1,7 +1,7 @@
 import {RepositoryDetailPresentation} from "./RepositoryDetailPresentation";
 import {getRepositoryLanguages} from "@/infra/service/getRepositoryLanguages";
-import {buildRepositoryStats} from "@/shared/lib/utils";
 import {getRepositoryDetail} from "@/infra/service/getRepositoryDetail";
+import {buildRepositoryStats} from "./lib/buildRepositoryStats";
 
 type Props = {
   owner: string;
