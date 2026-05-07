@@ -3,7 +3,7 @@ import {useRouter} from "next/navigation";
 import {useTransition} from "react";
 import {useForm} from "react-hook-form";
 import {SearchRepoParams} from "../../types";
-import {searchParamsSchema} from "../../schemas/searchParams";
+import {searchParamsSchema} from "../../schemas";
 
 export function useRepositorySearchForm({query = ""}: {query?: string}) {
   const router = useRouter();

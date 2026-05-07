@@ -1,6 +1,6 @@
 import {z} from "zod";
 import {repositorySchema} from "../schemas/repositorySchema";
-import {searchParamsSchema} from "../schemas/searchParams";
+import {searchParamsSchema} from "../schemas/searchParamsSchema";
 import {repositoryDetailSchema} from "../schemas/repositoryDetailSchema";
 import {repositoryLanguagesSchema} from "../schemas/repositoryLanguageSchema";
 

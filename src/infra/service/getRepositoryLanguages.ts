@@ -1,4 +1,4 @@
-import {repositoryLanguagesSchema} from "@/feature/githubRepository/schemas/repositoryLanguageSchema";
+import {repositoryLanguagesSchema} from "@/feature/githubRepository/schemas";
 import {fetchLanguages} from "../api/githubApiClient";
 import {parseApiResponse} from "../parsers/parseApiResponse";
 

@@ -1,7 +1,7 @@
-import {repositorySchema} from "@/feature/githubRepository/schemas/repositorySchema";
 import {fetchGitHubRepositories} from "../api/githubApiClient";
 import {parseApiResponse} from "@/infra/parsers/parseApiResponse";
 import {PER_PAGE} from "@/feature/githubRepository/constants";
+import {repositorySchema} from "@/feature/githubRepository/schemas";
 
 export async function getRepositories(
   query?: string,
