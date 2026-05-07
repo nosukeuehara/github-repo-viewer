@@ -240,3 +240,19 @@ components/
 ├── ComponentName.tsx
 └── ComponentName.test.tsx
 ```
+
+## TODO : （後で消す）
+
+Service層のユニットテスト追加
+
+RepositorySearchFormPresentation.test.tsxがit.todo()
+
+RepositorySearchFrom（Fromになっている）
+
+parseApiResponseでErrorをthrow➞AppErrorに統一してエラーコード付与
+
+Playwrightで主要フロー（検索→詳細）をカバー
+
+ページネーション情報がバラバラ➞PaginationProps型で分割
+
+ページネーション計算にコメントなし➞JSDocまたはインラインコメント追加
