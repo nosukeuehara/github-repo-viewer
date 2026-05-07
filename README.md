@@ -48,7 +48,7 @@ npm run test
 
 ### shadcn/ui
 
-アクセシビリティをよくするためにライブラリを用いてます。
+アクセシビリティを向上させるためにshadcn/uiを採用しています。Radix UIをベースとしており、WAI-ARIAに準拠したコンポーネントを提供します。
 
 ### Zod
 
@@ -67,10 +67,11 @@ GitHub APIからのレスポンスをランタイムバリデーションし、�
 ```txt
 src/
 ├─ app/ # ルーティング専用
-├─ features/ # アプリ特定の機能を含む
+├─ feature/ # アプリ特定の機能を含む
 │   └─ (feature01)/ # 機能ごとにフォルダ分割
 ├─ infra/ # 外部APIとの通信処理を管理
 ├─ shared/ # アプリ共通レイアウト、UIサードパーティライブラリの格納場所
+├─ template/ # 複数のContainerを配置してapp/で描画するための格納場所
 └─ test/ # テストライブラリのセットアップ・e2eの記述場所
 
 ```
@@ -79,16 +80,25 @@ src/
 
 ### ポイント１：featuresの構成
 
-`features/`の各ディレクトリはContainer/Presentationを用いて **データフェッチ** と **画面表示** を分離するようにしました。UI表示とデータ取得を分離することで表示ロジックの単体テストを容易にしAPI変更の影響範囲を限定できる構成にしました。
+`feature/` の各ディレクトリはContainer/Presentationパターンを用いて **データフェッチ** と **画面表示** を分離しました。UI表示とデータ取得を分離することで、表示ロジックの単体テストを容易にし、API変更時の影響範囲を限定しています。
 
-ドメイン機能ごとにフォルダを分割するため今後機能が増えた場合は`features/`に適宜追加することで対応が可能。
+また、Presentationコンポーネントは同一ディレクトリ内のContainerからのみimportできるようにESLintの `no-restricted-imports` ルールを追加し、アーキテクチャの一貫性を強制しています。
 
-UI表示の単体テストは **Presentation** に対してテストを行います。APIとの結合テストは **Container** をテストで動作を担保するための構成にしました。Next.js App Routerでは async Server Component を含む構成になるためRTLのみで完全に検証することが難しいケースがあります。そのため、ページ全体の動作保証についてはe2eテストで担保する方針にしました。
+ドメイン機能ごとにフォルダを分割しているため、今後機能が増えた場合も `feature/` 配下へ追加することで拡張可能な構成としています。
 
-またテストコードを同じフォルダに置くことで管理しやすくしました。
+Next.js App Routerではasync Server Componentを含む構成となるため、Vitest + RTLのみでContainerを含む結合テストを安定して行うことが難しいケースがあります。そのため、本プロジェクトでは以下のように責務ごとにテストを分離しています。
+
+- APIレスポンス取得、runtime validation、データ変換、エラーハンドリング  
+  → Vitestによる単体テスト
+- Presentationコンポーネントの表示ロジック  
+  → React Testing Libraryによるコンポーネントテスト
+- Containerを経由した画面描画やユーザー操作を含む動作確認  
+  → E2Eテスト
+
+また、テストコードは対象コードと同じディレクトリに配置し、保守性を高めています。
 
 ```txt
-features/
+feature/
   └─ (feature01)/ # 機能ごとにフォルダ分割
       ├── components/ # Container / Presentation で分割
       │    ├─ feature01Container.tsx # データ取得してPresentationへ引数を渡す
@@ -100,24 +110,62 @@ features/
 
 ### ポイント２：app配下をルーティング専用にする
 
-Next.jsのフレームワークの制約上 `app/` にルーティングに関係がないファイルを置かないようにすることで可視性と意図しないバグを避けることを考慮しました。
+Next.jsのApp Router規約に従い、`app/`配下にはルーティングに関係するファイル（`page.tsx`、`layout.tsx`、`loading.tsx`、`error.tsx`）のみを配置しています。これにより、ディレクトリ構造の可視性を高め、意図しないルーティングバグを防止しています。
 
 ### ポイント３：Error Handling
 
-GitHub API のステータスコードごとにアプリケーションエラーへ変換し、error.tsx によってユーザー向けエラー表示を統一しています。
+GitHub API のステータスコードごとにアプリケーションエラーへ変換し、ユーザー向けエラー表示を統一しています。
 
-| ステータス | エラーコード        | メッセージ                            |
-| ---------- | ------------------- | ------------------------------------- |
-| 404        | NOT_FOUND           | Repository not found                  |
-| 403        | RATE_LIMIT          | GitHub API rate limit exceeded        |
-| 422        | BAD_REQUEST         | Invalid search query                  |
-| 503        | SERVICE_UNAVAILABLE | GitHub API is temporarily unavailable |
+**エラーメッセージの一元管理:**
 
-### ポイント４：キャッシュ戦略
+`errorMessages.ts`でAPIエラーメッセージを定数として一元管理し、コード全体での一貫性を確保しています。
+
+**エラーViewModelへの変換:**
+
+`getErrorViewModel`関数でAPIエラーをユーザー向けの表示情報に変換しています。各エラーに対して以下を定義：
+
+- `title`: ユーザー向けエラータイトル（日本語）
+- `description`: エラーの説明と対処法
+- `canRetry`: リトライ可能かどうか（レート制限やサービス障害は可、404や不正なクエリは不可）
+
+| ステータス | エラーコード        | メッセージ                            | リトライ |
+| ---------- | ------------------- | ------------------------------------- | -------- |
+| 404        | NOT_FOUND           | Repository not found                  | 不可     |
+| 403        | RATE_LIMIT          | GitHub API rate limit exceeded        | 可       |
+| 422        | BAD_REQUEST         | Invalid search query                  | 不可     |
+| 503        | SERVICE_UNAVAILABLE | GitHub API is temporarily unavailable | 可       |
+
+### ポイント４：infra層の責務分離
+
+`infra/`配下を責務ごとに分離し、変更の影響範囲を限定しています。
+
+```txt
+infra/
+├─ api/       # GitHub APIとの通信処理（fetch、エラーハンドリング）
+├─ errors/    # エラー定義、エラーメッセージ、ViewModel変換
+├─ parsers/   # Zodによるランタイムバリデーション
+└─ service/   # ビジネスロジック（リポジトリ取得、検索など）
+```
+
+**parseApiResponse:**
+
+Zodスキーマを用いてAPIレスポンスをランタイムバリデーションし、型安全なデータを返します。バリデーション失敗時は明確なエラーをスローします。
+
+```typescript
+export function parseApiResponse<T>(schema: z.ZodSchema<T>, data: unknown): T {
+  const result = schema.safeParse(data);
+  if (!result.success) {
+    throw new Error("API response is invalid");
+  }
+  return result.data;
+}
+```
+
+### ポイント５：キャッシュ戦略
 
 GitHub APIへのリクエストは `revalidate: 60` を設定し、60秒間のキャッシュを有効にしています。これによりレート制限への対策と、ユーザー体験の向上を両立しています。
 
-### ポイント５：Skeleton UIによるローディング体験の最適化
+### ポイント６：Skeleton UIによるローディング体験の最適化
 
 Next.js App Routerの `loading.tsx` とSkeleton UIを組み合わせ、データ取得中のUXを最適化しています。
 
@@ -134,7 +182,7 @@ export default function Page() {
 }
 ```
 
-### ポイント６：error.tsxによる統一されたエラーリカバリー
+### ポイント７：error.tsxによる統一されたエラーリカバリー
 
 Next.js App Routerの `error.tsx` を活用し、エラー発生時のユーザー体験を改善しています。
 
@@ -156,17 +204,32 @@ Next.js App Routerの `error.tsx` を活用し、エラー発生時のユーザ�
 
 ## テスト戦略
 
-本プロジェクトでは、テストの粒度を以下のように定義しています。
+本プロジェクトでは、責務ごとにテスト対象を分離しています。
 
-| テスト種別 | 対象                                     | ツール                  |
-| ---------- | ---------------------------------------- | ----------------------- |
-| 単体テスト | Presentationコンポーネント、純粋関数     | Vitest, Testing Library |
-| 結合テスト | Container + API通信 + Presentation       | Vitest, MSW             |
-| E2Eテスト  | 検索・詳細遷移・エラー表示などの主要導線 | 実ブラウザ              |
+| テスト種別     | 対象                                                         | ツール                  |
+| -------------- | ------------------------------------------------------------ | ----------------------- |
+| Unit Test      | API通信、runtime validation、データ変換、エラーハンドリング  | Vitest, MSW             |
+| Component Test | Presentationコンポーネントの表示ロジック                     | Vitest, Testing Library |
+| E2E Test       | 検索・詳細遷移・エラー表示などの主要導線、画面全体の動作保証 | Playwright（予定）      |
+
+### テスト方針
+
+Next.js公式ドキュメントでは、Vitestはasync Server Componentを正式にはサポートしていません。（参考：https://nextjs.org/docs/app/guides/testing/vitest）
+
+そのため、本プロジェクトでは非同期Server ComponentをVitestで無理に結合テストする方針は取らず、責務ごとに保証範囲を分離しています。
+
+- APIレスポンス取得・runtime validation・データ変換・エラーハンドリング  
+  → Unit Testで保証
+- PresentationコンポーネントのUI表示  
+  → Component Testで保証
+- Containerを経由したデータ取得から画面描画までの一連の動作  
+  → E2E Testで保証
+
+これにより、テストの保守性と信頼性を両立しています。
 
 ### MSW (Mock Service Worker)
 
-API通信のモックにMSWを使用しています。`src/test/msw/server.ts` でモックサーバーを定義し、テスト実行時にGitHub APIへのリクエストをインターセプトします。
+単体テスト時のAPI通信モックにMSWを使用しています。`src/test/msw/server.ts` でモックサーバーを定義し、テスト実行時にGitHub APIへのリクエストをインターセプトします。
 
 ### テストファイルの配置
 
