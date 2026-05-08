@@ -1,7 +1,7 @@
 import {fetchGitHubRepositories} from "@/infra/api/githubApiClient";
 import {parseApiResponse} from "@/infra/parsers/parseApiResponse";
 import {PER_PAGE} from "@/feature/githubRepository/constants";
-import {repositorySchema} from "@/feature/githubRepository/schemas";
+import {repositorySearchResponseSchema} from "../schemas/repositorySearchResponseSchema";
 
 export async function getRepositories(
   query?: string,
@@ -17,10 +17,10 @@ export async function getRepositories(
 
   const data = await fetchGitHubRepositories(query, page, perPage);
 
+  const parsedResponse = parseApiResponse(repositorySearchResponseSchema, data);
+
   return {
-    repositories: data.items.map((repo) =>
-      parseApiResponse(repositorySchema, repo)
-    ),
-    totalCount: data.total_count,
+    repositories: parsedResponse.items,
+    totalCount: parsedResponse.total_count,
   };
 }

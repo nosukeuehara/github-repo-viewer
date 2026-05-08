@@ -1,4 +1,4 @@
-import {repositoryDetailSchema} from "@/feature/githubRepository/schemas";
+import {repositoryDetailSchema} from "@/infra/service/schemas";
 import {fetchGitHubRepositoryDetail} from "@/infra/api/githubApiClient";
 import {parseApiResponse} from "@/infra/parsers/parseApiResponse";
 
