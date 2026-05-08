@@ -5,9 +5,5 @@ import {parseApiResponse} from "@/infra/parsers/parseApiResponse";
 export async function getRepositoryLanguages(owner: string, repo: string) {
   const data = await fetchLanguages(owner, repo);
 
-  return parseApiResponse(
-    repositoryLanguagesSchema,
-    data,
-    "Repository languages response is invalid"
-  );
+  return parseApiResponse(repositoryLanguagesSchema, data);
 }

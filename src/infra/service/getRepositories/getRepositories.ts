@@ -19,11 +19,7 @@ export async function getRepositories(
 
   return {
     repositories: data.items.map((repo) =>
-      parseApiResponse(
-        repositorySchema,
-        repo,
-        "Repository search response is invalid"
-      )
+      parseApiResponse(repositorySchema, repo)
     ),
     totalCount: data.total_count,
   };
