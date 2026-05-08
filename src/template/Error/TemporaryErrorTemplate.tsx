@@ -1,6 +1,6 @@
-import Link from "next/link";
+import {Button} from "@/shared/shadcn/components/ui/button";
 
-export default function TemporaryErrorTemplate() {
+export default function TemporaryErrorTemplate({reset}: {reset: () => void}) {
   return (
     <div className="flex flex-col items-center gap-4 py-12">
       <h2 className="text-lg font-semibold">
@@ -11,9 +11,7 @@ export default function TemporaryErrorTemplate() {
         時間をおいて再度お試しください。
       </p>
 
-      <Link href="/" className="text-sm underline">
-        ホームへ戻る
-      </Link>
+      <Button onClick={() => reset()}>Retry</Button>
     </div>
   );
 }
