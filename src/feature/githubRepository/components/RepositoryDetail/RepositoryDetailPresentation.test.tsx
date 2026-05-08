@@ -1,6 +1,9 @@
 import {render, screen} from "@testing-library/react";
 import {RepositoryDetailPresentation} from "./RepositoryDetailPresentation";
-import type {RepositoryDetail, RepositoryLanguagesResponse} from "../../types";
+import {
+  RepositoryDetail,
+  RepositoryLanguagesResponse,
+} from "@/infra/service/schemas/types";
 
 const mockRepoData: RepositoryDetail = {
   id: 123456,
