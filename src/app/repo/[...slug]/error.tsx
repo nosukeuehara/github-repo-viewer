@@ -5,7 +5,7 @@ export default function ErrorPage({
   error,
   reset,
 }: {
-  error: Error & {status?: number};
+  error: Error;
   reset: () => void;
 }) {
   return <TemporaryErrorTemplate error={error} reset={reset} />;

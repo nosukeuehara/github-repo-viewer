@@ -5,7 +5,7 @@ export default function TemporaryErrorTemplate({
   error,
   reset,
 }: {
-  error: Error & {status?: number};
+  error: Error;
   reset: () => void;
 }) {
   const errorView = getErrorViewModel(error);
