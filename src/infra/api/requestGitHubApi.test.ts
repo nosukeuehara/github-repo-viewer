@@ -36,7 +36,6 @@ describe("requestGitHubApi", () => {
     await expect(requestGitHubApi("/repos/unknown/repo")).rejects.toMatchObject(
       {
         message: "Repository not found",
-        status: 404,
         code: "NOT_FOUND",
       }
     );
@@ -51,7 +50,7 @@ describe("requestGitHubApi", () => {
     await expect(
       requestGitHubApi("/search/repositories?q=react")
     ).rejects.toMatchObject({
-      status: 403,
+      message: "GitHub API rate limit exceeded",
       code: "RATE_LIMIT",
     });
   });
@@ -65,7 +64,7 @@ describe("requestGitHubApi", () => {
     await expect(
       requestGitHubApi("/search/repositories?q=")
     ).rejects.toMatchObject({
-      status: 422,
+      message: "Invalid search query",
       code: "BAD_REQUEST",
     });
   });
@@ -79,7 +78,7 @@ describe("requestGitHubApi", () => {
     await expect(
       requestGitHubApi("/search/repositories?q=react")
     ).rejects.toMatchObject({
-      status: 503,
+      message: "GitHub API is temporarily unavailable",
       code: "SERVICE_UNAVAILABLE",
     });
   });
@@ -93,7 +92,7 @@ describe("requestGitHubApi", () => {
     await expect(
       requestGitHubApi("/search/repositories?q=react")
     ).rejects.toMatchObject({
-      status: 500,
+      message: "Unexpected GitHub API error",
       code: "UNKNOWN",
     });
   });

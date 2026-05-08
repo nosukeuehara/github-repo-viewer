@@ -1,7 +1,26 @@
-import {AppError} from "../errors/AppError";
+import {APP_ERROR_CODE, AppError} from "../errors/AppError";
 import {APP_ERROR_MESSAGE} from "../errors/errorMessages";
 
 const GITHUB_API_BASE_URL = "https://api.github.com";
+
+const ERROR_BY_STATUS = {
+  404: {
+    code: APP_ERROR_CODE.NOT_FOUND,
+    message: APP_ERROR_MESSAGE.NOT_FOUND,
+  },
+  403: {
+    code: APP_ERROR_CODE.RATE_LIMIT,
+    message: APP_ERROR_MESSAGE.RATE_LIMIT,
+  },
+  422: {
+    code: APP_ERROR_CODE.BAD_REQUEST,
+    message: APP_ERROR_MESSAGE.BAD_REQUEST,
+  },
+  503: {
+    code: APP_ERROR_CODE.SERVICE_UNAVAILABLE,
+    message: APP_ERROR_MESSAGE.SERVICE_UNAVAILABLE,
+  },
+} as const;
 
 export async function requestGitHubApi<T>(path: string): Promise<T> {
   const res = await fetch(`${GITHUB_API_BASE_URL}${path}`, {
@@ -12,28 +31,18 @@ export async function requestGitHubApi<T>(path: string): Promise<T> {
   });
 
   if (!res.ok) {
-    // GitHub APIのHTTPステータスをアプリケーションエラーへ変換する
-    // スローされたAppErrorはNext.jsのerror.tsxで表示される
-    switch (res.status) {
-      case 404:
-        throw new AppError(APP_ERROR_MESSAGE.NOT_FOUND, 404, "NOT_FOUND");
+    const appError = ERROR_BY_STATUS[
+      // typeof で ERROR_BY_STATUS の型を取得し
+      // keyof でそのキー一覧の union 型を作成する
+      // res.status をその union 型へアサーションすることで
+      // ERROR_BY_STATUS のキーとして扱えるようにしている
+      res.status as keyof typeof ERROR_BY_STATUS
+    ] ?? {
+      code: APP_ERROR_CODE.UNKNOWN,
+      message: APP_ERROR_MESSAGE.UNKNOWN,
+    };
 
-      case 403:
-        throw new AppError(APP_ERROR_MESSAGE.RATE_LIMIT, 403, "RATE_LIMIT");
-
-      case 422:
-        throw new AppError(APP_ERROR_MESSAGE.BAD_REQUEST, 422, "BAD_REQUEST");
-
-      case 503:
-        throw new AppError(
-          APP_ERROR_MESSAGE.SERVICE_UNAVAILABLE,
-          503,
-          "SERVICE_UNAVAILABLE"
-        );
-
-      default:
-        throw new AppError(APP_ERROR_MESSAGE.UNKNOWN, res.status, "UNKNOWN");
-    }
+    throw new AppError(appError.code, appError.message);
   }
 
   return res.json() as Promise<T>;
