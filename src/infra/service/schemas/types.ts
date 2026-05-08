@@ -7,6 +7,4 @@ export type Repository = z.infer<typeof repositorySchema>;
 
 export type RepositoryDetail = z.infer<typeof repositoryDetailSchema>;
 
-export type RepositoryLanguagesResponse = z.infer<
-  typeof repositoryLanguagesSchema
->;
+export type RepositoryLanguages = z.infer<typeof repositoryLanguagesSchema>;
