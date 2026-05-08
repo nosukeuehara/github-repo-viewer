@@ -1,7 +1,7 @@
 "use client";
 
 import {RepositorySearchFormPresentation} from "./RepositorySearchFormPresentation";
-import {useRepositorySearchForm} from "./userSearchForm";
+import {useRepositorySearchForm} from "./useRepositorySearchForm";
 
 export function RepositorySearchFormContainer({
   query,
