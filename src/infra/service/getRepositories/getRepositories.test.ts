@@ -30,21 +30,27 @@ describe("getRepositories", () => {
 
     // 空の配列とtotalCountが0であることを確認
     expect(result).toEqual({
-      repositories: [],
-      totalCount: 0,
+      ok: true,
+      data: {
+        repositories: [],
+        totalCount: 0,
+      },
     });
   });
 
   it("queryがある場合、正しいリポジトリ情報とtotalCountを返す", async () => {
     mockedFetchGitHubRepositories.mockResolvedValue({
-      total_count: 1,
-      items: [
-        {
-          ...validRepository,
-          dummy_field:
-            "This field is not defined in the schema and should be ignored",
-        },
-      ],
+      ok: true,
+      data: {
+        items: [
+          {
+            ...validRepository,
+            dummy_field:
+              "This field is not defined in the schema and should be ignored",
+          },
+        ],
+        total_count: 1,
+      },
     });
 
     const result = await getRepositories("react", 1, 30);
@@ -54,21 +60,27 @@ describe("getRepositories", () => {
 
     // 返されるデータがスキーマに従っていることを確認（dummy_fieldが含まれていないことも確認）
     expect(result).toEqual({
-      repositories: [validRepository],
-      totalCount: 1,
+      ok: true,
+      data: {
+        repositories: [validRepository],
+        totalCount: 1,
+      },
     });
   });
 
   it("APIレスポンスがschemaと一致しない場合、エラーを投げる", async () => {
     // idがnumber型でないため、スキーマに一致しない
     mockedFetchGitHubRepositories.mockResolvedValue({
-      total_count: 1,
-      items: [
-        {
-          ...validRepository,
-          id: "invalid_id",
-        },
-      ],
+      ok: true,
+      data: {
+        total_count: 1,
+        items: [
+          {
+            ...validRepository,
+            id: "invalid_id",
+          },
+        ],
+      },
     });
 
     // APIレスポンスが正しい形式でない場合にエラーが投げられることを確認

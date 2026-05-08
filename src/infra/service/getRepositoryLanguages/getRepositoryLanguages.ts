@@ -1,9 +1,34 @@
 import {repositoryLanguagesSchema} from "@/infra/service/schemas";
 import {fetchLanguages} from "@/infra/api/githubApiClient";
 import {parseApiResponse} from "@/infra/parsers/parseApiResponse";
+import {RepositoryLanguages} from "../schemas/types";
+import {AppHandledError} from "@/infra/errors/handledError";
 
-export async function getRepositoryLanguages(owner: string, repo: string) {
-  const data = await fetchLanguages(owner, repo);
+type GetRepositoryLanguagesResult =
+  | {
+      ok: true;
+      data: RepositoryLanguages;
+    }
+  | {
+      ok: false;
+      error: AppHandledError;
+    };
 
-  return parseApiResponse(repositoryLanguagesSchema, data);
+export async function getRepositoryLanguages(
+  owner: string,
+  repo: string
+): Promise<GetRepositoryLanguagesResult> {
+  const result = await fetchLanguages(owner, repo);
+
+  if (!result.ok) {
+    return {
+      ok: false,
+      error: result.error,
+    };
+  }
+
+  return {
+    ok: true,
+    data: parseApiResponse(repositoryLanguagesSchema, result.data),
+  };
 }

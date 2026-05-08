@@ -14,19 +14,19 @@ export async function RepositorySearchResultListContainer({
   page = 1,
   perPage,
 }: Props) {
-  const {repositories, totalCount} = await getRepositories(
-    query,
-    page,
-    perPage
-  );
+  const result = await getRepositories(query, page, perPage);
+
+  if (!result.ok) {
+    return <div>Error: {result.error?.code}</div>;
+  }
 
   return (
     <div>
       <RepositoryListPresentation
         query={query}
-        repositories={repositories}
+        repositories={result.data.repositories}
         className="mb-10"
-        totalCount={totalCount}
+        totalCount={result.data.totalCount}
         page={page}
         perPage={perPage}
       />
@@ -36,7 +36,7 @@ export async function RepositorySearchResultListContainer({
           {...buildRepositoryPagination({
             query,
             currentPage: page,
-            totalCount,
+            totalCount: result.data.totalCount,
             perPage,
           })}
         />

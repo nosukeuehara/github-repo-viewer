@@ -1,9 +1,34 @@
 import {repositoryDetailSchema} from "@/infra/service/schemas";
 import {fetchGitHubRepositoryDetail} from "@/infra/api/githubApiClient";
 import {parseApiResponse} from "@/infra/parsers/parseApiResponse";
+import {RepositoryDetail} from "../schemas/types";
+import {AppHandledError} from "@/infra/errors/handledError";
 
-export async function getRepositoryDetail(owner: string, repo: string) {
-  const data = await fetchGitHubRepositoryDetail(owner, repo);
+type GetRepositoryDetailResult =
+  | {
+      ok: true;
+      data: RepositoryDetail;
+    }
+  | {
+      ok: false;
+      error: AppHandledError;
+    };
 
-  return parseApiResponse(repositoryDetailSchema, data);
+export async function getRepositoryDetail(
+  owner: string,
+  repo: string
+): Promise<GetRepositoryDetailResult> {
+  const result = await fetchGitHubRepositoryDetail(owner, repo);
+
+  if (!result.ok) {
+    return {
+      ok: false,
+      error: result.error,
+    };
+  }
+
+  return {
+    ok: true,
+    data: parseApiResponse(repositoryDetailSchema, result.data),
+  };
 }

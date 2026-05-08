@@ -17,26 +17,25 @@ describe("requestGitHubApi", () => {
       json: async () => mockData,
     } as Response);
 
-    await expect(requestGitHubApi("/repos/facebook/react")).resolves.toEqual(
-      mockData
-    );
+    await expect(requestGitHubApi("/repos/facebook/react")).resolves.toEqual({
+      ok: true,
+      data: mockData,
+    });
   });
 
-  it("ステータスが404の場合、NOT_FOUNDエラーを投げる", async () => {
+  it("ステータスが404の場合、NOT_FOUNDエラーを返す", async () => {
     vi.spyOn(global, "fetch").mockResolvedValue({
       ok: false,
       status: 404,
     } as Response);
 
-    await expect(requestGitHubApi("/repos/unknown/repo")).rejects.toMatchObject(
-      {
-        message: "Repository not found",
-        code: "NOT_FOUND",
-      }
-    );
+    await expect(requestGitHubApi("/repos/unknown/repo")).resolves.toEqual({
+      ok: false,
+      error: {code: "NOT_FOUND"},
+    });
   });
 
-  it("ステータスが403の場合、RATE_LIMITエラーを投げる", async () => {
+  it("ステータスが403の場合、RATE_LIMITエラーを返す", async () => {
     vi.spyOn(global, "fetch").mockResolvedValue({
       ok: false,
       status: 403,
@@ -44,27 +43,25 @@ describe("requestGitHubApi", () => {
 
     await expect(
       requestGitHubApi("/search/repositories?q=react")
-    ).rejects.toMatchObject({
-      message: "GitHub API rate limit exceeded",
-      code: "RATE_LIMIT",
+    ).resolves.toEqual({
+      ok: false,
+      error: {code: "RATE_LIMIT"},
     });
   });
 
-  it("ステータスが422の場合、BAD_REQUESTエラーを投げる", async () => {
+  it("ステータスが422の場合、BAD_REQUESTエラーを返す", async () => {
     vi.spyOn(global, "fetch").mockResolvedValue({
       ok: false,
       status: 422,
     } as Response);
 
-    await expect(
-      requestGitHubApi("/search/repositories?q=")
-    ).rejects.toMatchObject({
-      message: "Invalid search query",
-      code: "BAD_REQUEST",
+    await expect(requestGitHubApi("/search/repositories?q=")).resolves.toEqual({
+      ok: false,
+      error: {code: "BAD_REQUEST"},
     });
   });
 
-  it("ステータスが503の場合、SERVICE_UNAVAILABLEエラーを投げる", async () => {
+  it("ステータスが503の場合、SERVICE_UNAVAILABLEエラーを返す", async () => {
     vi.spyOn(global, "fetch").mockResolvedValue({
       ok: false,
       status: 503,
@@ -72,13 +69,13 @@ describe("requestGitHubApi", () => {
 
     await expect(
       requestGitHubApi("/search/repositories?q=react")
-    ).rejects.toMatchObject({
-      message: "GitHub API is temporarily unavailable",
-      code: "SERVICE_UNAVAILABLE",
+    ).resolves.toEqual({
+      ok: false,
+      error: {code: "SERVICE_UNAVAILABLE"},
     });
   });
 
-  it("予期しないステータスの場合、UNKNOWNエラーを投げる", async () => {
+  it("予期しないステータスの場合、エラーを投げる", async () => {
     vi.spyOn(global, "fetch").mockResolvedValue({
       ok: false,
       status: 500,
@@ -86,9 +83,6 @@ describe("requestGitHubApi", () => {
 
     await expect(
       requestGitHubApi("/search/repositories?q=react")
-    ).rejects.toMatchObject({
-      message: "Unexpected GitHub API error",
-      code: "UNKNOWN",
-    });
+    ).rejects.toThrow("Unexpected GitHub API error");
   });
 });

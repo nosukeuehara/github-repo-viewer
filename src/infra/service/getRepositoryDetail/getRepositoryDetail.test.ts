@@ -29,7 +29,10 @@ describe("getRepositoryDetail", () => {
   });
 
   it("正しい owner / repo で API を呼び、リポジトリ詳細を返す", async () => {
-    mockedFetchGitHubRepositoryDetail.mockResolvedValue(validMockResponse);
+    mockedFetchGitHubRepositoryDetail.mockResolvedValue({
+      ok: true,
+      data: validMockResponse,
+    });
 
     const result = await getRepositoryDetail("test-user", "test-repo");
 
@@ -39,7 +42,10 @@ describe("getRepositoryDetail", () => {
       "test-repo"
     );
     // 返されるデータがスキーマに従っていることを確認
-    expect(result).toEqual(validMockResponse);
+    expect(result).toEqual({
+      ok: true,
+      data: validMockResponse,
+    });
   });
 
   it("description が null の場合でも正常に返す", async () => {
@@ -48,18 +54,27 @@ describe("getRepositoryDetail", () => {
       description: null,
     };
 
-    mockedFetchGitHubRepositoryDetail.mockResolvedValue(response);
+    mockedFetchGitHubRepositoryDetail.mockResolvedValue({
+      ok: true,
+      data: response,
+    });
 
     const result = await getRepositoryDetail("test-user", "test-repo");
 
     // description が null の場合でも正常に返されることを確認
-    expect(result).toEqual(response);
+    expect(result).toEqual({
+      ok: true,
+      data: response,
+    });
   });
 
   it("APIレスポンスが schema と一致しない場合、エラーを投げる", async () => {
     mockedFetchGitHubRepositoryDetail.mockResolvedValue({
-      ...validMockResponse,
-      id: "invalid-id",
+      ok: true,
+      data: {
+        ...validMockResponse,
+        id: "invalid-id" as unknown as number,
+      },
     });
 
     // APIレスポンスが schema と一致しない場合、エラーが投げられることを確認

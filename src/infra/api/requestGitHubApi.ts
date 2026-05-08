@@ -1,5 +1,7 @@
-import {APP_ERROR_CODE, AppError} from "../errors/AppError";
+import {APP_ERROR_CODE} from "../errors/AppError";
 import {APP_ERROR_MESSAGE} from "../errors/errorMessages";
+import {AppHandledError} from "../errors/handledError";
+import {Result} from "../service/types/result";
 
 const GITHUB_API_BASE_URL = "https://api.github.com";
 
@@ -22,7 +24,9 @@ const ERROR_BY_STATUS = {
   },
 } as const;
 
-export async function requestGitHubApi(path: string): Promise<unknown> {
+export async function requestGitHubApi<T>(
+  path: string
+): Promise<Result<T, AppHandledError>> {
   const res = await fetch(`${GITHUB_API_BASE_URL}${path}`, {
     headers: {
       Accept: "application/vnd.github+json",
@@ -31,19 +35,21 @@ export async function requestGitHubApi(path: string): Promise<unknown> {
   });
 
   if (!res.ok) {
-    const appError = ERROR_BY_STATUS[
-      // typeof で ERROR_BY_STATUS の型を取得し
-      // keyof でそのキー一覧の union 型を作成する
-      // res.status をその union 型へアサーションすることで
-      // ERROR_BY_STATUS のキーとして扱えるようにしている
-      res.status as keyof typeof ERROR_BY_STATUS
-    ] ?? {
-      code: APP_ERROR_CODE.UNKNOWN,
-      message: APP_ERROR_MESSAGE.UNKNOWN,
-    };
+    const appError =
+      ERROR_BY_STATUS[res.status as keyof typeof ERROR_BY_STATUS];
 
-    throw new AppError(appError.code, appError.message);
+    if (appError) {
+      return {
+        ok: false,
+        error: {code: appError.code},
+      };
+    }
+
+    throw new Error(APP_ERROR_MESSAGE.UNKNOWN);
   }
 
-  return res.json() as Promise<unknown>;
+  return {
+    ok: true,
+    data: (await res.json()) as T,
+  };
 }

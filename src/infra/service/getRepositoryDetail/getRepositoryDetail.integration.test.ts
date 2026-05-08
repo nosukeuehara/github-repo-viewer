@@ -33,6 +33,9 @@ describe("getRepositoryDetail integration", () => {
 
     await expect(
       getRepositoryDetail("test-user", "test-repo")
-    ).resolves.toEqual(mockResponse);
+    ).resolves.toEqual({
+      ok: true,
+      data: mockResponse,
+    });
   });
 });

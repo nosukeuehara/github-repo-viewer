@@ -13,11 +13,17 @@ export async function RepositoryDetailContainer({owner, repo}: Props) {
     getRepositoryDetail(owner, repo),
     getRepositoryLanguages(owner, repo),
   ]);
-  const stats = buildRepositoryStats(repositoryDetail);
+  if (!repositoryDetail.ok) {
+    return <div>Error: {repositoryDetail.error?.code}</div>;
+  }
+  if (!languages.ok) {
+    return <div>Error: {languages.error?.code}</div>;
+  }
+  const stats = buildRepositoryStats(repositoryDetail.data);
   return (
     <RepositoryDetailPresentation
-      repo={repositoryDetail}
-      languages={languages}
+      repo={repositoryDetail.data}
+      languages={languages.data}
       stats={stats}
     />
   );

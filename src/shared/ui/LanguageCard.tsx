@@ -1,16 +1,16 @@
 "use client";
 
-import {RepositoryLanguagesResponse} from "@/feature/githubRepository/types";
+import {RepositoryLanguages} from "@/infra/service/schemas/types";
 import {
   HoverCard,
   HoverCardTrigger,
   HoverCardContent,
 } from "../shadcn/components/ui/hover-card";
 
-export function RepositoryLanguages({
+export function RepositoryLanguagesViewer({
   languages,
 }: {
-  languages: RepositoryLanguagesResponse;
+  languages: RepositoryLanguages;
 }) {
   const sortedLanguages = Object.entries(languages).sort((a, b) => b[1] - a[1]);
   const visibleLanguages = sortedLanguages.slice(0, 5);

@@ -1,8 +1,8 @@
 import Image from "next/image";
-import {RepositoryLanguages} from "@/shared/ui/LanguageCard";
+import {RepositoryLanguagesViewer} from "@/shared/ui/LanguageCard";
 import {
   RepositoryDetail,
-  RepositoryLanguagesResponse,
+  RepositoryLanguages,
 } from "@/infra/service/schemas/types";
 
 type RepositoryStat = {
@@ -12,13 +12,13 @@ type RepositoryStat = {
 
 type RepositoryDetailPresentationProps = {
   repo: RepositoryDetail;
-  languages: RepositoryLanguagesResponse;
+  languages: RepositoryLanguages;
   stats: RepositoryStat[];
 };
 
 type RepositoryDetailHeaderProps = {
   repo: RepositoryDetail;
-  languages: RepositoryLanguagesResponse;
+  languages: RepositoryLanguages;
 };
 
 export function RepositoryDetailPresentation({
@@ -58,7 +58,7 @@ function RepositoryDetailHeader({
         <div className="space-y-2 min-w-0">
           <h2 className="text-xl font-semibold sm:text-2xl">{repo.name}</h2>
 
-          <RepositoryLanguages languages={languages} />
+          <RepositoryLanguagesViewer languages={languages} />
 
           {repo.description && (
             <p className="text-sm text-muted-foreground">{repo.description}</p>
