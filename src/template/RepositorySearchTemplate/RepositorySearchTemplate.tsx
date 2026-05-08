@@ -1,5 +1,5 @@
 import {Suspense} from "react";
-import {RepositorySearchFormContainer} from "@/feature/githubRepository/components/RepositorySearchFrom";
+import {RepositorySearchFormContainer} from "@/feature/githubRepository/components/RepositorySearchForm";
 import {RepositorySearchResultListContainer} from "@/feature/githubRepository/components/RepositorySearchResultList";
 import {RepositorySearchResultListSkeleton} from "@/shared/ui/RepositorySearchResultList";
 import {PER_PAGE} from "@/feature/githubRepository/constants";
