@@ -1,5 +1,4 @@
 import Link from "next/link";
-import {Repository} from "../../types";
 import Image from "next/image";
 import {
   Card,
@@ -8,6 +7,7 @@ import {
   CardTitle,
 } from "@/shared/shadcn/components/ui/card";
 import {cn} from "@/shared/lib/utils";
+import {Repository} from "@/infra/service/schemas/types";
 
 type Props = {
   query?: string;

@@ -1,6 +1,9 @@
 import Image from "next/image";
-import {RepositoryDetail, RepositoryLanguagesResponse} from "../../types";
 import {RepositoryLanguages} from "@/shared/ui/LanguageCard";
+import {
+  RepositoryDetail,
+  RepositoryLanguagesResponse,
+} from "@/infra/service/schemas/types";
 
 type RepositoryStat = {
   label: string;

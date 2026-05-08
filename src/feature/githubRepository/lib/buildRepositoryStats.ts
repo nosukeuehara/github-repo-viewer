@@ -1,4 +1,4 @@
-import {RepositoryDetail} from "@/feature/githubRepository/types";
+import {RepositoryDetail} from "@/infra/service/schemas/types";
 
 export function buildRepositoryStats(repo: RepositoryDetail) {
   return [
