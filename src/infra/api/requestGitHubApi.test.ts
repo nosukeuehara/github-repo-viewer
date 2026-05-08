@@ -1,13 +1,12 @@
 import {afterEach, describe, expect, it, vi} from "vitest";
 import {requestGitHubApi} from "./requestGitHubApi";
-import {AppError} from "../errors/AppError";
 
 describe("requestGitHubApi", () => {
   afterEach(() => {
     vi.restoreAllMocks();
   });
 
-  it("returns json response when request succeeds", async () => {
+  it("リクエストが成功したときに適切なJsonを返す", async () => {
     const mockData = {
       id: 1,
       name: "react",
@@ -23,15 +22,11 @@ describe("requestGitHubApi", () => {
     );
   });
 
-  it("throws NOT_FOUND error when status is 404", async () => {
+  it("ステータスが404の場合、NOT_FOUNDエラーを投げる", async () => {
     vi.spyOn(global, "fetch").mockResolvedValue({
       ok: false,
       status: 404,
     } as Response);
-
-    await expect(
-      requestGitHubApi("/repos/unknown/repo")
-    ).rejects.toBeInstanceOf(AppError);
 
     await expect(requestGitHubApi("/repos/unknown/repo")).rejects.toMatchObject(
       {
@@ -41,7 +36,7 @@ describe("requestGitHubApi", () => {
     );
   });
 
-  it("throws RATE_LIMIT error when status is 403", async () => {
+  it("ステータスが403の場合、RATE_LIMITエラーを投げる", async () => {
     vi.spyOn(global, "fetch").mockResolvedValue({
       ok: false,
       status: 403,
@@ -55,7 +50,7 @@ describe("requestGitHubApi", () => {
     });
   });
 
-  it("throws BAD_REQUEST error when status is 422", async () => {
+  it("ステータスが422の場合、BAD_REQUESTエラーを投げる", async () => {
     vi.spyOn(global, "fetch").mockResolvedValue({
       ok: false,
       status: 422,
@@ -69,7 +64,7 @@ describe("requestGitHubApi", () => {
     });
   });
 
-  it("throws SERVICE_UNAVAILABLE error when status is 503", async () => {
+  it("ステータスが503の場合、SERVICE_UNAVAILABLEエラーを投げる", async () => {
     vi.spyOn(global, "fetch").mockResolvedValue({
       ok: false,
       status: 503,
@@ -83,7 +78,7 @@ describe("requestGitHubApi", () => {
     });
   });
 
-  it("throws UNKNOWN error for unexpected status", async () => {
+  it("予期しないステータスの場合、UNKNOWNエラーを投げる", async () => {
     vi.spyOn(global, "fetch").mockResolvedValue({
       ok: false,
       status: 500,

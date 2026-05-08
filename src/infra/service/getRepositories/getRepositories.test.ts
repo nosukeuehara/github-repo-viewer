@@ -52,12 +52,6 @@ describe("getRepositories", () => {
     // APIが正しい引数で呼び出されることを確認
     expect(mockedFetchGitHubRepositories).toHaveBeenCalledWith("react", 1, 30);
 
-    // totalCountが正しいことを確認
-    expect(result.totalCount).toBe(1);
-
-    // repositoriesの長さが正しいことを確認
-    expect(result.repositories).toHaveLength(1);
-
     // 返されるデータがスキーマに従っていることを確認（dummy_fieldが含まれていないことも確認）
     expect(result).toEqual({
       repositories: [validRepository],
