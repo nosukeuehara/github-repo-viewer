@@ -8,6 +8,7 @@ import {getErrorViewModelByCode} from "@/infra/errors/getErrorViewModal";
 import {ErrorView} from "@/shared/ui/ErrorView";
 import {APP_ERROR_MESSAGE} from "@/infra/errors/errorMessages";
 import {AppHandledError} from "@/infra/errors/handledError";
+import {BackButton} from "@/shared/ui/BackButton";
 
 type Props = {
   owner: string;
@@ -42,10 +43,15 @@ export async function RepositoryDetailContainer({owner, repo}: Props) {
 
   const stats = buildRepositoryStats(repositoryDetail.data);
   return (
-    <RepositoryDetailPresentation
-      repo={repositoryDetail.data}
-      languages={languages.data}
-      stats={stats}
-    />
+    <>
+      <RepositoryDetailPresentation
+        repo={repositoryDetail.data}
+        languages={languages.data}
+        stats={stats}
+      />
+      <div className="flex justify-center mt-6">
+        <BackButton />
+      </div>
+    </>
   );
 }

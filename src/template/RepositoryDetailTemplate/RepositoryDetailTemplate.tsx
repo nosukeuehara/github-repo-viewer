@@ -1,5 +1,4 @@
 import {RepositoryDetailContainer} from "@/feature/githubRepository/components/RepositoryDetail";
-import {BackButton} from "@/shared/ui/BackButton";
 
 type Props = {
   owner: string;
@@ -7,15 +6,7 @@ type Props = {
 };
 
 function RepositoryDetailTemplate({owner, repo}: Props) {
-  return (
-    <div>
-      <RepositoryDetailContainer owner={owner} repo={repo} />
-
-      <div className="flex justify-center mt-6">
-        <BackButton />
-      </div>
-    </div>
-  );
+  return <RepositoryDetailContainer owner={owner} repo={repo} />;
 }
 
 export {RepositoryDetailTemplate as RepositoryDetail};
