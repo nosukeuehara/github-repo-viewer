@@ -1,6 +1,6 @@
 import {repositoryDetailSchema} from "@/feature/githubRepository/schemas";
-import {fetchGitHubRepositoryDetail} from "../api/githubApiClient";
-import {parseApiResponse} from "../parsers/parseApiResponse";
+import {fetchGitHubRepositoryDetail} from "@/infra/api/githubApiClient";
+import {parseApiResponse} from "@/infra/parsers/parseApiResponse";
 
 export async function getRepositoryDetail(owner: string, repo: string) {
   const data = await fetchGitHubRepositoryDetail(owner, repo);

@@ -1,6 +1,6 @@
 import {repositoryLanguagesSchema} from "@/feature/githubRepository/schemas";
-import {fetchLanguages} from "../api/githubApiClient";
-import {parseApiResponse} from "../parsers/parseApiResponse";
+import {fetchLanguages} from "@/infra/api/githubApiClient";
+import {parseApiResponse} from "@/infra/parsers/parseApiResponse";
 
 export async function getRepositoryLanguages(owner: string, repo: string) {
   const data = await fetchLanguages(owner, repo);

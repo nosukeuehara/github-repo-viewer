@@ -1,6 +1,6 @@
 import {RepositoryDetailPresentation} from "./RepositoryDetailPresentation";
-import {getRepositoryLanguages} from "@/infra/service/getRepositoryLanguages";
-import {getRepositoryDetail} from "@/infra/service/getRepositoryDetail";
+import {getRepositoryLanguages} from "@/infra/service/getRepositoryLanguages/getRepositoryLanguages";
+import {getRepositoryDetail} from "@/infra/service";
 import {buildRepositoryStats} from "./lib/buildRepositoryStats";
 
 type Props = {

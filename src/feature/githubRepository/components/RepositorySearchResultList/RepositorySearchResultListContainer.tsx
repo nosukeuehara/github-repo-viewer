@@ -1,6 +1,6 @@
 import {AppPagination} from "@/shared/ui/AppPagination";
 import {RepositoryListPresentation} from "./RepositorySearchResultListPresentation";
-import {getRepositories} from "@/infra/service/getRepositories";
+import {getRepositories} from "@/infra/service";
 import {buildRepositoryPagination} from "./lib/buildRepositoryPagination";
 
 interface Props {
