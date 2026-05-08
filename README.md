@@ -80,22 +80,31 @@ src/
 
 ### ポイント１：featuresの構成
 
-`feature/` の各ディレクトリはContainer/Presentationパターンを用いて **データフェッチ** と **画面表示** を分離しました。UI表示とデータ取得を分離することで、表示ロジックの単体テストを容易にし、API変更時の影響範囲を限定しています。
+`feature/` 配下はドメイン機能ごとにディレクトリを分割しています。これにより、関連する UI・状態管理・データ取得処理を同一箇所へ集約でき、機能追加や修正時に影響範囲を把握しやすい構成を目指しました。また、feature ごとに依存関係を閉じ込めることで、コンポーネント間の結合度が高くなり過ぎることを防いでいます。
 
-また、Presentationコンポーネントは同一ディレクトリ内のContainerからのみimportできるようにESLintの `no-restricted-imports` ルールを追加し、アーキテクチャの一貫性を強制しています。
+#### ポイント1.1 Conrtainer/Presentation パターン
 
-ドメイン機能ごとにフォルダを分割しているため、今後機能が増えた場合も `feature/` 配下へ追加することで拡張可能な構成としています。
+feature 内のコンポーネント構成には Container / Presentation パターンを採用しています。Container ではデータ取得や状態制御を担当し、Presentation では UI 表示のみを扱うことで責務を分離しました。さらに、Presentation コンポーネントが feature 内の複数ディレクトリから参照され始めると、feature 分割による独立性が薄れ、依存関係が複雑化しやすくなります。
 
-Next.js App Routerではasync Server Componentを含む構成となるため、Vitest + RTLのみでContainerを含む結合テストを安定して行うことが難しいケースがあります。そのため、本プロジェクトでは以下のように責務ごとにテストを分離しています。
+そのため、Presentation コンポーネントは同一ディレクトリ内の Container からのみ import できるよう、ESLint の `no-restricted-imports` ルールを設定し、アーキテクチャの一貫性を保てるようにしています。
 
-- APIレスポンス取得、runtime validation、データ変換、エラーハンドリング  
-  → Vitestによる単体テスト
-- Presentationコンポーネントの表示ロジック  
-  → React Testing Libraryによるコンポーネントテスト
-- Containerを経由した画面描画やユーザー操作を含む動作確認  
-  → E2Eテスト
+また、外部 API のレスポンスは service / parser 層で runtime validation を行い、UI コンポーネントが外部 API の仕様へ直接依存しない構成としています。これにより、API レスポンス構造の変更が発生した場合でも、
+影響範囲を Container や service 層へ閉じ込めやすくしています。
 
-また、テストコードは対象コードと同じディレクトリに配置し、保守性を高めています。
+#### ポイント1.2 `feature/` 配下のテスト戦略
+
+Next.js App Router では async Server Component を含む構成となるため、Vitest + React Testing Library のみで Container を含む結合テストを安定して行うことが難しいケースがあります。
+
+そのため、本プロジェクトでは責務ごとにテストを分離しています。
+
+- Presentation コンポーネントの表示ロジック
+  → React Testing Library によるコンポーネントテスト
+
+- Container を経由した画面描画やユーザー操作を含む動作確認
+  → E2E テスト
+
+また、テストコードは対象コードと同じディレクトリへ配置し、
+関連する実装とテストを近い場所で保守できるようにしています。
 
 ```txt
 feature/
@@ -108,21 +117,21 @@ feature/
       └── types/ # zod schemaから推論した型定義
 ```
 
-### ポイント２：app配下をルーティング専用にする
+### ポイント２：`app/` 配下をルーティング専用にする
 
 Next.jsのApp Router規約に従い、`app/`配下にはルーティングに関係するファイル（`page.tsx`、`layout.tsx`、`loading.tsx`、`error.tsx`）のみを配置しています。これにより、ディレクトリ構造の可視性を高め、意図しないルーティングバグを防止しています。
 
 ### ポイント３：Error Handling
 
-GitHub API のステータスコードごとにアプリケーションエラーへ変換し、ユーザー向けエラー表示を統一しています。
+GitHub API のステータスコードごとにアプリケーションエラーへ変換し、ユーザー向けエラー表示の統一を意識しました。
 
-**エラーメッセージの一元管理:**
+#### ポイント3.1 エラーメッセージの一元管理
 
 `errorMessages.ts`でAPIエラーメッセージを定数として一元管理し、コード全体での一貫性を確保しています。
 
-**エラーViewModelへの変換:**
+#### ポイント3.2 エラーViewModelへの変換
 
-`getErrorViewModel`関数でAPIエラーをユーザー向けの表示情報に変換しています。各エラーに対して以下を定義：
+`getErrorViewModel`関数でAPIエラーをユーザー向けの表示情報に変換しています。各エラーに対して以下を定義
 
 - `title`: ユーザー向けエラータイトル（日本語）
 - `description`: エラーの説明と対処法
@@ -240,19 +249,3 @@ components/
 ├── ComponentName.tsx
 └── ComponentName.test.tsx
 ```
-
-## TODO : （後で消す）
-
-Service層のユニットテスト追加
-
-RepositorySearchFormPresentation.test.tsxがit.todo()
-
-RepositorySearchFrom（Fromになっている）
-
-parseApiResponseでErrorをthrow➞AppErrorに統一してエラーコード付与
-
-Playwrightで主要フロー（検索→詳細）をカバー
-
-ページネーション情報がバラバラ➞PaginationProps型で分割
-
-ページネーション計算にコメントなし➞JSDocまたはインラインコメント追加
