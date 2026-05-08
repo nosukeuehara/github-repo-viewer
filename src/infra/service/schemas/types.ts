@@ -1,7 +1,7 @@
 import {z} from "zod";
-import {repositorySchema} from "../../../infra/service/schemas/repositorySchema";
-import {repositoryDetailSchema} from "../../../infra/service/schemas/repositoryDetailSchema";
-import {repositoryLanguagesSchema} from "../../../infra/service/schemas/repositoryLanguageSchema";
+import {repositorySchema} from "./repositorySchema";
+import {repositoryDetailSchema} from "./repositoryDetailSchema";
+import {repositoryLanguagesSchema} from "./repositoryLanguageSchema";
 
 export type Repository = z.infer<typeof repositorySchema>;
 
