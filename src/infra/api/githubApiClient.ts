@@ -1,4 +1,3 @@
-import {PER_PAGE} from "@/feature/githubRepository/constants";
 import {requestGitHubApi} from "./requestGitHubApi";
 import {RepositoryDetail, RepositoryLanguages} from "../service/schemas/types";
 
@@ -10,7 +9,7 @@ type GitHubRepositorySearchResponse = {
 export async function fetchGitHubRepositories(
   query: string,
   page: number,
-  perPage = PER_PAGE
+  perPage = 12
 ) {
   const params = new URLSearchParams({
     q: `${query} in:name`,
