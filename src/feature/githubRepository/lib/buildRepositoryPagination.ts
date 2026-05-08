@@ -1,14 +1,16 @@
+type PaginationProps = {
+  query: string;
+  currentPage: number;
+  totalCount: number;
+  perPage: number;
+};
+
 export function buildRepositoryPagination({
   query,
   currentPage,
   totalCount,
   perPage,
-}: {
-  query: string;
-  currentPage: number;
-  totalCount: number;
-  perPage: number;
-}) {
+}: PaginationProps) {
   const totalPages = Math.ceil(totalCount / perPage);
   const encodedQuery = encodeURIComponent(query);
 
