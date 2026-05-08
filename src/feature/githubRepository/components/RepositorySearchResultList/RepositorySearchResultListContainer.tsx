@@ -1,7 +1,7 @@
 import {AppPagination} from "@/shared/ui/AppPagination";
 import {RepositoryListPresentation} from "./RepositorySearchResultListPresentation";
 import {getRepositories} from "@/infra/service";
-import {buildRepositoryPagination} from "./lib/buildRepositoryPagination";
+import {buildRepositoryPagination} from "../../lib/buildRepositoryPagination";
 
 interface Props {
   query?: string;
