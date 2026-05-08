@@ -1,10 +1,9 @@
-import {APP_ERROR_MESSAGE} from "./errorMessages";
-import {getErrorViewModel} from "./getErrorViewModal";
+import {APP_ERROR_CODE} from "./AppError";
+import {getErrorViewModelByCode} from "./getErrorViewModal";
 
-describe("getErrorViewModel", () => {
+describe("getErrorViewModelByCode", () => {
   describe("NOT_FOUNDエラーの場合", () => {
-    const error = new Error(APP_ERROR_MESSAGE.NOT_FOUND);
-    const result = getErrorViewModel(error);
+    const result = getErrorViewModelByCode(APP_ERROR_CODE.NOT_FOUND);
 
     it("タイトルが「リポジトリが見つかりませんでした。」を返す", () => {
       expect(result.title).toBe("リポジトリが見つかりませんでした。");
@@ -22,8 +21,7 @@ describe("getErrorViewModel", () => {
   });
 
   describe("RATE_LIMITエラーの場合", () => {
-    const error = new Error(APP_ERROR_MESSAGE.RATE_LIMIT);
-    const result = getErrorViewModel(error);
+    const result = getErrorViewModelByCode(APP_ERROR_CODE.RATE_LIMIT);
 
     it("タイトルが「利用回数の上限に達しました。」を返す", () => {
       expect(result.title).toBe("利用回数の上限に達しました。");
@@ -39,8 +37,7 @@ describe("getErrorViewModel", () => {
   });
 
   describe("BAD_REQUESTエラーの場合", () => {
-    const error = new Error(APP_ERROR_MESSAGE.BAD_REQUEST);
-    const result = getErrorViewModel(error);
+    const result = getErrorViewModelByCode(APP_ERROR_CODE.BAD_REQUEST);
 
     it("タイトルが「検索条件が正しくありません。」を返す", () => {
       expect(result.title).toBe("検索条件が正しくありません。");
@@ -56,8 +53,7 @@ describe("getErrorViewModel", () => {
   });
 
   describe("SERVICE_UNAVAILABLEエラーの場合", () => {
-    const error = new Error(APP_ERROR_MESSAGE.SERVICE_UNAVAILABLE);
-    const result = getErrorViewModel(error);
+    const result = getErrorViewModelByCode(APP_ERROR_CODE.SERVICE_UNAVAILABLE);
 
     it("タイトルが「GitHub APIに接続できませんでした。」を返す", () => {
       expect(result.title).toBe("GitHub APIに接続できませんでした。");
@@ -72,9 +68,8 @@ describe("getErrorViewModel", () => {
     });
   });
 
-  describe("未知のエラーメッセージの場合", () => {
-    const error = new Error("Unknown error message");
-    const result = getErrorViewModel(error);
+  describe("UNKNOWNエラーの場合", () => {
+    const result = getErrorViewModelByCode(APP_ERROR_CODE.UNKNOWN);
 
     it("タイトルが「予期しないエラーが発生しました。」を返す", () => {
       expect(result.title).toBe("予期しないエラーが発生しました。");

@@ -1,40 +1,39 @@
-import {APP_ERROR_MESSAGE} from "./errorMessages";
+import {APP_ERROR_CODE, AppErrorCode} from "./AppError";
 
-export function getErrorViewModel(error: Error) {
-  switch (error.message) {
-    case APP_ERROR_MESSAGE.NOT_FOUND:
-      return {
-        title: "リポジトリが見つかりませんでした。",
-        description: "リポジトリ名や所有者名を確認してください。",
-        canRetry: false,
-      };
+export type ErrorViewModel = {
+  title: string;
+  description: string;
+  canRetry: boolean;
+};
 
-    case APP_ERROR_MESSAGE.RATE_LIMIT:
-      return {
-        title: "利用回数の上限に達しました。",
-        description: "時間をおいて再度お試しください。",
-        canRetry: true,
-      };
+const ERROR_VIEW_MODEL_BY_CODE: Record<AppErrorCode, ErrorViewModel> = {
+  [APP_ERROR_CODE.NOT_FOUND]: {
+    title: "リポジトリが見つかりませんでした。",
+    description: "リポジトリ名や所有者名を確認してください。",
+    canRetry: false,
+  },
+  [APP_ERROR_CODE.RATE_LIMIT]: {
+    title: "利用回数の上限に達しました。",
+    description: "時間をおいて再度お試しください。",
+    canRetry: true,
+  },
+  [APP_ERROR_CODE.BAD_REQUEST]: {
+    title: "検索条件が正しくありません。",
+    description: "検索キーワードを変更してください。",
+    canRetry: false,
+  },
+  [APP_ERROR_CODE.SERVICE_UNAVAILABLE]: {
+    title: "GitHub APIに接続できませんでした。",
+    description: "時間をおいて再度お試しください。",
+    canRetry: true,
+  },
+  [APP_ERROR_CODE.UNKNOWN]: {
+    title: "予期しないエラーが発生しました。",
+    description: "時間をおいて再度お試しください。",
+    canRetry: true,
+  },
+};
 
-    case APP_ERROR_MESSAGE.BAD_REQUEST:
-      return {
-        title: "検索条件が正しくありません。",
-        description: "検索キーワードを変更してください。",
-        canRetry: false,
-      };
-
-    case APP_ERROR_MESSAGE.SERVICE_UNAVAILABLE:
-      return {
-        title: "GitHub APIに接続できませんでした。",
-        description: "時間をおいて再度お試しください。",
-        canRetry: true,
-      };
-
-    default:
-      return {
-        title: "予期しないエラーが発生しました。",
-        description: "時間をおいて再度お試しください。",
-        canRetry: true,
-      };
-  }
+export function getErrorViewModelByCode(code: AppErrorCode): ErrorViewModel {
+  return ERROR_VIEW_MODEL_BY_CODE[code];
 }
