@@ -12,20 +12,17 @@ export async function fetchGitHubRepositories(
     per_page: String(perPage),
   });
 
-  return requestGitHubApi<{
-    items: unknown[];
-    total_count: number;
-  }>(`/search/repositories?${params}`);
+  return requestGitHubApi(`/search/repositories?${params}`);
 }
 
 export async function fetchGitHubRepositoryDetail(owner: string, repo: string) {
-  return requestGitHubApi<unknown>(
+  return requestGitHubApi(
     `/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}`
   );
 }
 
 export async function fetchLanguages(owner: string, repo: string) {
-  return requestGitHubApi<unknown>(
+  return requestGitHubApi(
     `/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/languages`
   );
 }

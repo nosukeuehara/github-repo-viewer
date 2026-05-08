@@ -22,7 +22,7 @@ const ERROR_BY_STATUS = {
   },
 } as const;
 
-export async function requestGitHubApi<T>(path: string): Promise<T> {
+export async function requestGitHubApi(path: string): Promise<unknown> {
   const res = await fetch(`${GITHUB_API_BASE_URL}${path}`, {
     headers: {
       Accept: "application/vnd.github+json",
@@ -45,5 +45,5 @@ export async function requestGitHubApi<T>(path: string): Promise<T> {
     throw new AppError(appError.code, appError.message);
   }
 
-  return res.json() as Promise<T>;
+  return res.json() as Promise<unknown>;
 }
