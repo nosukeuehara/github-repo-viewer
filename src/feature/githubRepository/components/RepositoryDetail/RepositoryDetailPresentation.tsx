@@ -37,7 +37,7 @@ function RepositoryDetailHeader({
 }: RepositoryDetailHeaderProps) {
   return (
     <div className="space-y-4">
-      <div className="flex items-start gap-4">
+      <div className="flex items-center gap-4">
         <Image
           src={repo.owner.avatar_url}
           alt={`${repo.owner.login} のアイコン`}
@@ -57,21 +57,11 @@ function RepositoryDetailHeader({
 
           <RepositoryLanguages languages={languages} />
 
-          {/* PC表示 */}
           {repo.description && (
-            <p className="hidden sm:block text-sm text-muted-foreground">
-              {repo.description}
-            </p>
+            <p className="text-sm text-muted-foreground">{repo.description}</p>
           )}
         </div>
       </div>
-
-      {/* スマホ表示 */}
-      {repo.description && (
-        <p className="sm:hidden text-sm text-muted-foreground">
-          {repo.description}
-        </p>
-      )}
     </div>
   );
 }
