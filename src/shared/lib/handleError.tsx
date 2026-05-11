@@ -5,6 +5,12 @@ import {APP_ERROR_MESSAGE} from "@/infra/errors/errorMessages";
 import {getErrorViewModelByCode} from "@/infra/errors/getErrorViewModal";
 import {notFound} from "next/navigation";
 
+/**
+ * ハンドリング可能なアプリケーションエラーを画面表示用のUIへ変換する。
+ * 想定外の障害や復旧困難なエラーは、
+ * この関数では扱わず error.tsx 側でフォールバック表示を行う。
+ */
+
 export function handleError(
   error: AppHandledError
 ): never | React.ReactElement {
