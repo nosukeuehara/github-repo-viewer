@@ -13,9 +13,8 @@ test("リポジトリ検索ができる", async ({page}) => {
     .poll(() => new URL(page.url()).searchParams.get("q"))
     .toBe(params.get("q"));
 
-  // facebook/reactはない可能性もあるため、完全に安易なテストではあるが
-  // 検索結果が表示されていることの簡易的な確認として入れている
-  await expect(page.getByText("facebook/react")).toBeVisible();
+  // モックデータにfacebook/reactが含まれていることを確認
+  await expect(page.getByText("facebook/react", {exact: true})).toBeVisible();
 });
 
 test("ページ遷移ができる", async ({page}) => {

@@ -3,11 +3,7 @@ import {expect, test} from "@playwright/test";
 test("詳細ページへ遷移できる", async ({page}) => {
   await page.goto("/search?q=react");
 
-  await page
-    .getByRole("link", {
-      name: /facebook\/react/i,
-    })
-    .click();
+  await page.locator('a[href="/repo/facebook/react"]').click();
 
   await expect(page).toHaveURL("/repo/facebook/react");
 

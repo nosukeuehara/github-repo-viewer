@@ -186,10 +186,9 @@ Next.js App Router では async Server Component を含む構成となるため�
   → React Testing Library によるコンポーネントテスト
 
 - Container を経由した画面描画やユーザー操作を含む動作確認
-  → E2E テスト
+  → Playwright による E2E テスト（MSW でAPIをモック、詳細は「テスト戦略」セクション参照）
 
-また、テストコードは対象コードと同じディレクトリへ配置し、
-関連する実装とテストを近い場所で保守できるようにしています。
+また、テストコードは対象コードと同じディレクトリへ配置し、関連する実装とテストを近い場所で保守できるようにしています。
 
 ```txt
 feature/
@@ -262,6 +261,23 @@ if (!repositoryDetail.ok) {
 | 422        | BAD_REQUEST         | Invalid search query                  | 不可     |
 | 503        | SERVICE_UNAVAILABLE | GitHub API is temporarily unavailable | 可       |
 
+#### ポイント3.4 error.tsxによる統一されたエラーリカバリー
+
+Next.js App Routerの `error.tsx` を活用し、予期しないエラー発生時のユーザー体験を改善しています。
+
+- **共通エラーコンポーネント**: `ErrorPageRetry` コンポーネントで全ページ共通のエラー表示とリトライ機能を提供
+- **ページ別エラーメッセージ**: 検索ページと詳細ページで文脈に応じたメッセージを表示
+- **リトライ機能**: `reset()` 関数によりページ全体を再レンダリングせずにServer Componentの再取得が可能
+
+```typescript
+// ErrorPageRetry - 再利用可能なエラーリカバリーUI
+<div className="flex flex-col items-center gap-4 py-12">
+  <p>{error.message}</p>
+  <h2>{displayMessage}</h2>
+  <Button onClick={() => reset()}>リトライ</Button>
+</div>
+```
+
 ### ポイント４：infra層の責務分離
 
 `infra/`配下を責務ごとに分離し、変更の影響範囲を限定しています。
@@ -288,11 +304,7 @@ export function parseApiResponse<T>(schema: z.ZodSchema<T>, data: unknown): T {
 }
 ```
 
-### ポイント５：キャッシュ戦略
-
-GitHub APIへのリクエストは `revalidate: 60` を設定し、60秒間のキャッシュを有効にしています。これによりレート制限への対策と、ユーザー体験の向上を両立しています。
-
-### ポイント６：Skeleton UIによるローディング体験の最適化
+### ポイント５：Skeleton UIによるローディング体験の最適化
 
 Next.js App Routerの `loading.tsx` とSkeleton UIを組み合わせ、データ取得中のUXを最適化しています。
 
@@ -307,26 +319,6 @@ Next.js App Routerの `loading.tsx` とSkeleton UIを組み合わせ、データ
 export default function Page() {
   return <RepositorySearchPageSkeleton />;
 }
-```
-
-### ポイント７：error.tsxによる統一されたエラーリカバリー
-
-Next.js App Routerの `error.tsx` を活用し、エラー発生時のユーザー体験を改善しています。
-
-**実装のポイント:**
-
-- **共通エラーコンポーネント**: `ErrorPageRetry` コンポーネントで全ページ共通のエラー表示とリトライ機能を提供
-- **ページ別エラーメッセージ**: 検索ページ（"Failed to load repositories"）と詳細ページ（"Failed to load repository data"）で文脈に応じたメッセージを表示
-- **リトライ機能**: `reset()` 関数によりページ全体を再レンダリングせずにServer Componentの再取得が可能
-- **エラー詳細の表示**: APIから返されるエラーメッセージ（レート制限、404など）をユーザーに表示
-
-```typescript
-// ErrorPageRetry - 再利用可能なエラーリカバリーUI
-<div className="flex flex-col items-center gap-4 py-12">
-  <p>{error.message}</p>
-  <h2>{displayMessage}</h2>
-  <Button onClick={() => reset()}>リトライ</Button>
-</div>
 ```
 
 ## テスト戦略
@@ -357,7 +349,31 @@ Next.js公式ドキュメントでは、Vitestはasync Server Componentを正式
 
 ### MSW (Mock Service Worker)
 
-単体テスト時のAPI通信モックにMSWを使用しています。`src/test/msw/server.ts` でモックサーバーを定義し、テスト実行時にGitHub APIへのリクエストをインターセプトします。
+単体テスト・E2Eテストの両方でMSWを使用してGitHub APIをモックしています。これにより、APIレート制限やリポジトリの実データを気にせず安定したテストを実行できます。
+
+| テスト種別 | MSW起動方法                                  | 設定ファイル             |
+| ---------- | -------------------------------------------- | ------------------------ |
+| 単体テスト | `setup.ts`で`server.listen()`                | `src/test/setup.ts`      |
+| E2Eテスト  | `instrumentation.ts`でサーバー起動時に有効化 | `src/instrumentation.ts` |
+
+**E2EテストでのMSW有効化:**
+
+Next.jsの`instrumentation.ts`を使用し、`ENABLE_MSW=true`の環境変数が設定されている場合のみMSWを有効化しています。
+
+```typescript
+// src/instrumentation.ts
+export async function register() {
+  if (
+    process.env.NEXT_RUNTIME === "nodejs" &&
+    process.env.ENABLE_MSW === "true"
+  ) {
+    const {server} = await import("@/test/msw/server");
+    server.listen({onUnhandledRequest: "bypass"});
+  }
+}
+```
+
+Playwrightの設定で `ENABLE_MSW=true` を渡すことで、E2Eテスト実行時のみMSWを有効化しています。
 
 ### Integration Test
 
