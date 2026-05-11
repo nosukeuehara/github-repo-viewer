@@ -1,6 +1,6 @@
 import {Button} from "@/shared/shadcn/components/ui/button";
 
-export default function TemporaryErrorTemplate({reset}: {reset: () => void}) {
+export default function UnexpectedErrorTemplate({reset}: {reset: () => void}) {
   return (
     <div className="flex flex-col items-center gap-4 py-12">
       <h2 className="text-lg font-semibold">

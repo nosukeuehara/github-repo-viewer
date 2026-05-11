@@ -1,6 +1,6 @@
 "use client";
-import TemporaryErrorTemplate from "@/template/Error/TemporaryErrorTemplate";
+import UnexpectedErrorTemplate from "@/template/Error/UnexpectedErrorTemplate";
 
 export default function ErrorPage({reset}: {reset: () => void}) {
-  return <TemporaryErrorTemplate reset={reset} />;
+  return <UnexpectedErrorTemplate reset={reset} />;
 }
