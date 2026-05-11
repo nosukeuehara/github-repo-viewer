@@ -25,6 +25,9 @@ describe("getRepositoryLanguages integration", () => {
 
     await expect(
       getRepositoryLanguages("test-user", "test-repo")
-    ).resolves.toEqual(mockResponse);
+    ).resolves.toEqual({
+      ok: true,
+      data: mockResponse,
+    });
   });
 });

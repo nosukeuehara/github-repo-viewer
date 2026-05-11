@@ -1,70 +1,80 @@
-import {fetchGitHubRepositoryDetail} from "@/infra/api/githubApiClient";
-import {getRepositoryDetail} from "../getRepositoryDetail/getRepositoryDetail";
+import {fetchLanguages} from "@/infra/api/githubApiClient";
+import {getRepositoryLanguages} from "./getRepositoryLanguages";
 
 vi.mock("@/infra/api/githubApiClient", () => ({
-  fetchGitHubRepositoryDetail: vi.fn(),
+  fetchLanguages: vi.fn(),
 }));
 
-const mockedFetchGitHubRepositoryDetail = vi.mocked(
-  fetchGitHubRepositoryDetail
-);
+const mockedFetchLanguages = vi.mocked(fetchLanguages);
 
 const validMockResponse = {
-  id: 123,
-  name: "test-repo",
-  description: "This is a test repository",
-  stargazers_count: 100,
-  forks_count: 50,
-  watchers_count: 75,
-  open_issues_count: 10,
-  owner: {
-    login: "test-user",
-    avatar_url: "https://example.com/avatar.png",
-  },
+  TypeScript: 50000,
+  JavaScript: 30000,
+  CSS: 10000,
 };
 
-describe("getRepositoryDetail", () => {
+describe("getRepositoryLanguages", () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  it("正しい owner / repo で API を呼び、リポジトリ詳細を返す", async () => {
-    mockedFetchGitHubRepositoryDetail.mockResolvedValue(validMockResponse);
+  it("正しい owner / repo で API を呼び、言語情報を返す", async () => {
+    mockedFetchLanguages.mockResolvedValue({
+      ok: true,
+      data: validMockResponse,
+    });
 
-    const result = await getRepositoryDetail("test-user", "test-repo");
+    const result = await getRepositoryLanguages("test-user", "test-repo");
 
     // APIが正しい引数で呼び出されることを確認
-    expect(mockedFetchGitHubRepositoryDetail).toHaveBeenCalledWith(
-      "test-user",
-      "test-repo"
-    );
+    expect(mockedFetchLanguages).toHaveBeenCalledWith("test-user", "test-repo");
     // 返されるデータがスキーマに従っていることを確認
-    expect(result).toEqual(validMockResponse);
+    expect(result).toEqual({
+      ok: true,
+      data: validMockResponse,
+    });
   });
 
-  it("description が null の場合でも正常に返す", async () => {
-    const response = {
-      ...validMockResponse,
-      description: null,
-    };
+  it("空のオブジェクトの場合でも正常に返す", async () => {
+    mockedFetchLanguages.mockResolvedValue({
+      ok: true,
+      data: {},
+    });
 
-    mockedFetchGitHubRepositoryDetail.mockResolvedValue(response);
+    const result = await getRepositoryLanguages("test-user", "test-repo");
 
-    const result = await getRepositoryDetail("test-user", "test-repo");
-
-    // description が null の場合でも正常に返されることを確認
-    expect(result).toEqual(response);
+    // 空のオブジェクトの場合でも正常に返されることを確認
+    expect(result).toEqual({
+      ok: true,
+      data: {},
+    });
   });
 
   it("APIレスポンスが schema と一致しない場合、エラーを投げる", async () => {
-    mockedFetchGitHubRepositoryDetail.mockResolvedValue({
-      ...validMockResponse,
-      id: "invalid-id",
+    mockedFetchLanguages.mockResolvedValue({
+      ok: true,
+      data: {
+        TypeScript: "invalid" as unknown as number, // number型でないためスキーマに一致しない
+      },
     });
 
     // APIレスポンスが schema と一致しない場合、エラーが投げられることを確認
-    await expect(getRepositoryDetail("test-user", "test-repo")).rejects.toThrow(
-      "Unexpected GitHub API error"
-    );
+    await expect(
+      getRepositoryLanguages("test-user", "test-repo")
+    ).rejects.toThrow("Unexpected GitHub API error");
+  });
+
+  it("APIがエラーを返した場合、エラーを返す", async () => {
+    mockedFetchLanguages.mockResolvedValue({
+      ok: false,
+      error: {code: "NOT_FOUND"},
+    });
+
+    const result = await getRepositoryLanguages("test-user", "test-repo");
+
+    expect(result).toEqual({
+      ok: false,
+      error: {code: "NOT_FOUND"},
+    });
   });
 });

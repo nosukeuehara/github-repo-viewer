@@ -48,8 +48,9 @@ describe("getRepositories integration", () => {
       })
     );
 
-    await expect(getRepositories("react", 1, 30)).resolves.toEqual(
-      expectedResult
-    );
+    await expect(getRepositories("react", 1, 30)).resolves.toEqual({
+      ok: true,
+      data: expectedResult,
+    });
   });
 });

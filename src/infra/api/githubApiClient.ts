@@ -1,10 +1,15 @@
-import {PER_PAGE} from "@/feature/githubRepository/constants";
 import {requestGitHubApi} from "./requestGitHubApi";
+import {RepositoryDetail, RepositoryLanguages} from "../service/schemas/types";
+
+type GitHubRepositorySearchResponse = {
+  items: unknown[];
+  total_count: number;
+};
 
 export async function fetchGitHubRepositories(
   query: string,
   page: number,
-  perPage = PER_PAGE
+  perPage = 12
 ) {
   const params = new URLSearchParams({
     q: `${query} in:name`,
@@ -12,17 +17,19 @@ export async function fetchGitHubRepositories(
     per_page: String(perPage),
   });
 
-  return requestGitHubApi(`/search/repositories?${params}`);
+  return requestGitHubApi<GitHubRepositorySearchResponse>(
+    `/search/repositories?${params}`
+  );
 }
 
 export async function fetchGitHubRepositoryDetail(owner: string, repo: string) {
-  return requestGitHubApi(
+  return requestGitHubApi<RepositoryDetail>(
     `/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}`
   );
 }
 
 export async function fetchLanguages(owner: string, repo: string) {
-  return requestGitHubApi(
+  return requestGitHubApi<RepositoryLanguages>(
     `/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/languages`
   );
 }

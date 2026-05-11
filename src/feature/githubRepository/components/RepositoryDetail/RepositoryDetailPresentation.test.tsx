@@ -2,7 +2,7 @@ import {render, screen} from "@testing-library/react";
 import {RepositoryDetailPresentation} from "./RepositoryDetailPresentation";
 import {
   RepositoryDetail,
-  RepositoryLanguagesResponse,
+  RepositoryLanguages,
 } from "@/infra/service/schemas/types";
 
 const mockRepoData: RepositoryDetail = {
@@ -19,7 +19,7 @@ const mockRepoData: RepositoryDetail = {
   },
 };
 
-const mockLangData: RepositoryLanguagesResponse = {
+const mockLangData: RepositoryLanguages = {
   TypeScript: 77468,
   HTML: 3493,
   CSS: 1725,

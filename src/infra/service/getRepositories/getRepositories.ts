@@ -1,26 +1,53 @@
 import {fetchGitHubRepositories} from "@/infra/api/githubApiClient";
 import {parseApiResponse} from "@/infra/parsers/parseApiResponse";
-import {PER_PAGE} from "@/feature/githubRepository/constants";
 import {repositorySearchResponseSchema} from "../schemas/repositorySearchResponseSchema";
+import {Repository} from "../schemas/types";
+import {AppHandledError} from "@/infra/errors/handledError";
+
+type GetRepositoriesResult =
+  | {
+      ok: true;
+      data: {
+        repositories: Repository[];
+        totalCount: number;
+      };
+    }
+  | {
+      ok: false;
+      error: AppHandledError;
+    };
 
 export async function getRepositories(
   query?: string,
   page = 1,
-  perPage = PER_PAGE
-) {
+  perPage = 30
+): Promise<GetRepositoriesResult> {
   if (!query) {
     return {
-      repositories: [],
-      totalCount: 0,
+      ok: true,
+      data: {
+        repositories: [],
+        totalCount: 0,
+      },
     };
   }
 
-  const data = await fetchGitHubRepositories(query, page, perPage);
+  const result = await fetchGitHubRepositories(query, page, perPage);
 
-  const parsedResponse = parseApiResponse(repositorySearchResponseSchema, data);
+  if (!result.ok) {
+    return {
+      ok: false,
+      error: result.error,
+    };
+  }
+
+  const parsed = parseApiResponse(repositorySearchResponseSchema, result.data);
 
   return {
-    repositories: parsedResponse.items,
-    totalCount: parsedResponse.total_count,
+    ok: true,
+    data: {
+      repositories: parsed.items,
+      totalCount: parsed.total_count,
+    },
   };
 }
