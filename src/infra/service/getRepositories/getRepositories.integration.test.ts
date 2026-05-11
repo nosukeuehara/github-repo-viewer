@@ -42,13 +42,13 @@ describe("getRepositories integration", () => {
 
         expect(url.searchParams.get("q")).toBe("react in:name");
         expect(url.searchParams.get("page")).toBe("1");
-        expect(url.searchParams.get("per_page")).toBe("30");
+        expect(url.searchParams.get("per_page")).toBe("12");
 
         return HttpResponse.json(mockApiResponse);
       })
     );
 
-    await expect(getRepositories("react", 1, 30)).resolves.toEqual({
+    await expect(getRepositories(12, "react", 1)).resolves.toEqual({
       ok: true,
       data: expectedResult,
     });

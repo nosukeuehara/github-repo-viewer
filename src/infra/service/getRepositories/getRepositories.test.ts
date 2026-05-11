@@ -23,7 +23,7 @@ describe("getRepositories", () => {
   });
 
   it("queryが無い場合、空の配列とtotalCount0を返す", async () => {
-    const result = await getRepositories("", 1, 30);
+    const result = await getRepositories(12, "", 1);
 
     // APIが呼び出されないことを確認
     expect(mockedFetchGitHubRepositories).not.toHaveBeenCalled();
@@ -53,10 +53,10 @@ describe("getRepositories", () => {
       },
     });
 
-    const result = await getRepositories("react", 1, 30);
+    const result = await getRepositories(12, "react", 1);
 
     // APIが正しい引数で呼び出されることを確認
-    expect(mockedFetchGitHubRepositories).toHaveBeenCalledWith("react", 1, 30);
+    expect(mockedFetchGitHubRepositories).toHaveBeenCalledWith(12, "react", 1);
 
     // 返されるデータがスキーマに従っていることを確認（dummy_fieldが含まれていないことも確認）
     expect(result).toEqual({
@@ -84,7 +84,7 @@ describe("getRepositories", () => {
     });
 
     // APIレスポンスが正しい形式でない場合にエラーが投げられることを確認
-    await expect(getRepositories("react", 1, 30)).rejects.toThrow(
+    await expect(getRepositories(12, "react", 1)).rejects.toThrow(
       "Unexpected GitHub API error"
     );
   });

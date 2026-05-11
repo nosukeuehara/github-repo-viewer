@@ -18,10 +18,10 @@ describe("githubApiClient", () => {
   });
 
   it("GitHub検索APIへ正しいURLを渡す", async () => {
-    await fetchGitHubRepositories("react", 2, 30);
+    await fetchGitHubRepositories(12, "react", 2);
 
     expect(mockedRequestGitHubApi).toHaveBeenCalledWith(
-      "/search/repositories?q=react+in%3Aname&page=2&per_page=30"
+      "/search/repositories?q=react+in%3Aname&page=2&per_page=12"
     );
   });
 

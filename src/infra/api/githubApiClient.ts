@@ -7,9 +7,9 @@ type GitHubRepositorySearchResponse = {
 };
 
 export async function fetchGitHubRepositories(
+  perPage: number,
   query: string,
-  page: number,
-  perPage = 12
+  page: number
 ) {
   const params = new URLSearchParams({
     q: `${query} in:name`,

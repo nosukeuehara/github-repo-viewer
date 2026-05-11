@@ -19,9 +19,9 @@ function RepositorySearchTemplate({
         fallback={<RepositorySearchResultListSkeleton />}
       >
         <RepositorySearchResultListContainer
+          perPage={PER_PAGE}
           query={param}
           page={page}
-          perPage={PER_PAGE}
         />
       </Suspense>
     </div>

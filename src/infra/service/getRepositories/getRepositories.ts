@@ -18,9 +18,9 @@ type GetRepositoriesResult =
     };
 
 export async function getRepositories(
+  perPage: number,
   query?: string,
-  page = 1,
-  perPage = 30
+  page = 1
 ): Promise<GetRepositoriesResult> {
   if (!query) {
     return {
@@ -32,7 +32,7 @@ export async function getRepositories(
     };
   }
 
-  const result = await fetchGitHubRepositories(query, page, perPage);
+  const result = await fetchGitHubRepositories(perPage, query, page);
 
   if (!result.ok) {
     return {

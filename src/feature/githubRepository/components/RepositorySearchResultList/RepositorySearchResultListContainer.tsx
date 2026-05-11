@@ -5,17 +5,17 @@ import {buildRepositoryPagination} from "../../lib/buildRepositoryPagination";
 import {handleError} from "@/shared/lib/handleError";
 
 interface Props {
+  perPage: number;
   query?: string;
   page?: number;
-  perPage: number;
 }
 
 export async function RepositorySearchResultListContainer({
+  perPage,
   query,
   page = 1,
-  perPage,
 }: Props) {
-  const result = await getRepositories(query, page, perPage);
+  const result = await getRepositories(perPage, query, page);
 
   if (!result.ok) {
     return handleError(result.error);
