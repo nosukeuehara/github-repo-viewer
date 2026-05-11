@@ -423,16 +423,16 @@ components/
 └── ComponentName.test.tsx
 ```
 
-一方e2eテストは `src/test/e2e/` 配下に `app/` と同じ階層構造を再現しページごとのテストファイル `*.spec.tsx` を作成しています。
+一方e2eテストは `src/test/e2e/` 配下に `app/` と同じ階層構造を再現しページごとのテストファイル `*.spec.ts` を作成しています。
 
 `app/` 配下にルーティングに関連しないファイルを置かないために分けることを意識しています。
 
 ```txt
 test/
   └──e2e/
-      └──root.spec.tsx
+      └──root.spec.ts
       ├── search/
-      |   └──search.spec.tsx
+      |   └──search.spec.ts
       └── repo/slug/
-                └──repoDetail.spec.tsx
+                └──repoDetail.spec.ts
 ```
