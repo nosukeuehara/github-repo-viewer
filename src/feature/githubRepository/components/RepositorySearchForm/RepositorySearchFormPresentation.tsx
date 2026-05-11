@@ -7,7 +7,7 @@ import {Button} from "@/shared/shadcn/components/ui/button";
 type Props = {
   register: UseFormRegister<SearchRepoParams>;
   errors: FieldErrors<SearchRepoParams>;
-  onSubmit: () => void;
+  onSubmit: (data: SearchRepoParams) => void;
   isPending: boolean;
   className?: string;
 };
@@ -20,7 +20,12 @@ export function RepositorySearchFormPresentation({
   className,
 }: Props) {
   return (
-    <form onSubmit={onSubmit} className={`flex items-start gap-2 ${className}`}>
+    <form
+      onSubmit={(e) => {
+        onSubmit({q: e.currentTarget.q.value});
+      }}
+      className={`flex items-start gap-2 ${className}`}
+    >
       <Field className="flex-1">
         <Input
           {...register("q")}

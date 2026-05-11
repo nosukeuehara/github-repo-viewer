@@ -1,7 +1,7 @@
 import {zodResolver} from "@hookform/resolvers/zod";
 import {useRouter} from "next/navigation";
 import {useTransition} from "react";
-import {useForm} from "react-hook-form";
+import {useForm, SubmitHandler} from "react-hook-form";
 import {SearchRepoParams} from "../../types";
 import {searchParamsSchema} from "./lib";
 
@@ -15,11 +15,11 @@ export function useRepositorySearchForm({query = ""}: {query?: string}) {
     defaultValues: {q: defaultQuery},
   });
 
-  const onSubmit = form.handleSubmit((data) => {
+  const onSubmit: SubmitHandler<SearchRepoParams> = (data) => {
     startTransition(() => {
       router.push(`/search?q=${encodeURIComponent(data.q)}`);
     });
-  });
+  };
 
   return {
     register: form.register,
