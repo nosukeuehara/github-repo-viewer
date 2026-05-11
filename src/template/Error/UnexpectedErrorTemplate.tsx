@@ -11,7 +11,7 @@ export default function UnexpectedErrorTemplate({reset}: {reset: () => void}) {
         時間をおいて再度お試しください。
       </p>
 
-      <Button onClick={() => reset()}>Retry</Button>
+      <Button onClick={() => reset()}>リトライ</Button>
     </div>
   );
 }

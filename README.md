@@ -8,6 +8,14 @@
 
 リポジトリ名からGitHubのリポジトリを検索するアプリです。
 
+### 主な機能
+
+- **リポジトリ検索**: キーワードでGitHubリポジトリを検索
+- **ページネーション**: 検索結果の一覧表示とページ切り替え
+- **詳細表示**: リポジトリの詳細情報（スター数、フォーク数、使用言語など）を表示
+- **エラーハンドリング**: レート制限、404エラーなどをユーザーフレンドリーに表示
+- **レスポンシブデザイン**: PC・スマートフォン両対応
+
 ## 必要要件
 
 - Node.js v20以上
@@ -31,20 +39,23 @@ npm run start
 # リント
 npm run lint
 
-# テスト実行
+# ユニットテスト実行
 npm run test
+
+# E2Eテスト実行
+npm run e2e
 ```
 
 ## 使用技術
 
-| カテゴリ       | 技術                          |
-| -------------- | ----------------------------- |
-| フレームワーク | Next.js 16 (App Router)       |
-| 言語           | TypeScript 5                  |
-| UI             | React 19, shadcn/ui, Radix UI |
-| スタイリング   | Tailwind CSS 4                |
-| フォーム       | React Hook Form 7 + Zod       |
-| テスト         | Vitest, Testing Library, MSW  |
+| カテゴリ       | 技術                                       |
+| -------------- | ------------------------------------------ |
+| フレームワーク | Next.js 16.2 (App Router)                  |
+| 言語           | TypeScript 5                               |
+| UI             | React 19.2, shadcn/ui, Radix UI            |
+| スタイリング   | Tailwind CSS 4                             |
+| フォーム       | React Hook Form 7 + Zod 4                  |
+| テスト         | Vitest 4, Testing Library, MSW, Playwright |
 
 ### shadcn/ui
 
@@ -52,7 +63,42 @@ npm run test
 
 ### Zod
 
-GitHub APIからのレスポンスをランタイムバリデーションし、型安全性を担保しています。
+GitHub APIからのレスポンスをランタイムバリデーションし、型安全性を担保しています。また、Zodスキーマから型を推論することで、スキーマと型定義の二重管理を防いでいます。
+
+```typescript
+// スキーマ定義
+export const repositorySchema = z.object({
+  id: z.number(),
+  name: z.string(),
+  full_name: z.string(),
+  owner: z.object({avatar_url: z.string()}),
+});
+
+// 型推論（スキーマと自動同期）
+export type Repository = z.infer<typeof repositorySchema>;
+```
+
+## アーキテクチャ概要
+
+本プロジェクトは以下の3層構造で設計しています。
+
+### 1. App Router層（`app/`）
+
+ルーティング専用。`page.tsx`、`loading.tsx`、`error.tsx` のみを配置し、ビジネスロジックは持たせない。
+
+### 2. Template / Feature層（`template/`、`feature/`）
+
+- **Container Component**: async Server Component としてデータ取得を担当。`Promise.all` で並列取得し、`Result<T,E>` 型でエラーハンドリング
+- **Presentation Component**: Props のみに依存する純粋なUIコンポーネント。Testing Library でテスト可能
+
+### 3. Infra層（`infra/`）
+
+- **Service**: ビジネスロジック（Result型でエラーを返却）
+- **API Client**: GitHub API との通信（fetch + キャッシュ設定）
+- **Parser**: Zodによるランタイムバリデーション
+- **Errors**: エラーコード定義、UI表示用ViewModel変換
+
+**データフロー**: `page.tsx` → `Container` → `Service` → `API Client` → `Parser` → `Presentation`
 
 ## ページ構成
 
@@ -82,16 +128,55 @@ src/
 
 `feature/` 配下はドメイン機能ごとにディレクトリを分割しています。これにより、関連する UI・状態管理・データ取得処理を同一箇所へ集約でき、機能追加や修正時に影響範囲を把握しやすい構成を目指しました。また、feature ごとに依存関係を閉じ込めることで、コンポーネント間の結合度が高くなり過ぎることを防いでいます。
 
-#### ポイント1.1 Conrtainer/Presentation パターン
+#### ポイント1.1 Container/Presentation パターン
 
 feature 内のコンポーネント構成には Container / Presentation パターンを採用しています。Container ではデータ取得や状態制御を担当し、Presentation では UI 表示のみを扱うことで責務を分離しました。さらに、Presentation コンポーネントが feature 内の複数ディレクトリから参照され始めると、feature 分割による独立性が薄れ、依存関係が複雑化しやすくなります。
 
 そのため、Presentation コンポーネントは同一ディレクトリ内の Container からのみ import できるよう、ESLint の `no-restricted-imports` ルールを設定し、アーキテクチャの一貫性を保てるようにしています。
 
-また、外部 API のレスポンスは service / parser 層で runtime validation を行い、UI コンポーネントが外部 API の仕様へ直接依存しない構成としています。これにより、API レスポンス構造の変更が発生した場合でも、
-影響範囲を Container や service 層へ閉じ込めやすくしています。
+```javascript
+// eslint.config.mjs
+{
+  rules: {
+    "no-restricted-imports": [
+      "error",
+      {
+        patterns: [{
+          group: [
+            "@/feature/*/components/*/*Presentation",
+            "@/feature/*/components/*/*Presentation.*",
+          ],
+          message: "Presentation Componentは同一ディレクトリのContainer Componentからのみインポートしてください。",
+        }],
+      },
+    ],
+  },
+}
+```
 
-#### ポイント1.2 `feature/` 配下のテスト戦略
+また、外部 API のレスポンスは service / parser 層で runtime validation を行い、UI コンポーネントが外部 API の仕様へ直接依存しない構成としています。これにより、API レスポンス構造の変更が発生した場合でも、影響範囲を Container や service 層へ閉じ込めやすくしています。
+
+#### ポイント1.2 Promise.all による並列データ取得
+
+詳細ページでは、リポジトリ情報と使用言語情報を `Promise.all` で並列取得し、ウォーターフォールを防いでいます。
+
+```typescript
+// RepositoryDetailContainer.tsx
+export async function RepositoryDetailContainer({owner, repo}: Props) {
+  // 2つのAPIを並列で呼び出し
+  const [repositoryDetail, languages] = await Promise.all([
+    getRepositoryDetail(owner, repo),
+    getRepositoryLanguages(owner, repo),
+  ]);
+
+  if (!repositoryDetail.ok) {
+    return handleError(repositoryDetail.error);
+  }
+  // ...
+}
+```
+
+#### ポイント1.3 `feature/` 配下のテスト戦略
 
 Next.js App Router では async Server Component を含む構成となるため、Vitest + React Testing Library のみで Container を含む結合テストを安定して行うことが難しいケースがあります。
 
@@ -125,11 +210,44 @@ Next.jsのApp Router規約に従い、`app/`配下にはルーティングに関
 
 GitHub API のステータスコードごとにアプリケーションエラーへ変換し、ユーザー向けエラー表示の統一を意識しました。
 
-#### ポイント3.1 エラーメッセージの一元管理
+#### ポイント3.1 Result<T, E>型による型安全なエラーハンドリング
+
+例外をthrowする代わりに `Result` 型を使用し、エラーを値として扱っています。これにより、エラーハンドリングの漏れをコンパイル時に検出できます。
+
+```typescript
+// 型定義
+type Result<T, E> = {ok: true; data: T} | {ok: false; error: E};
+
+// Service層での使用例
+export async function getRepositories(
+  query?: string
+): Promise<GetRepositoriesResult> {
+  const result = await fetchGitHubRepositories(query);
+
+  if (!result.ok) {
+    return {ok: false, error: result.error};
+  }
+
+  return {ok: true, data: {repositories: parsed.items}};
+}
+
+// Container層での使用例
+const repositoryDetail = await getRepositoryDetail(owner, repo);
+if (!repositoryDetail.ok) {
+  return handleError(repositoryDetail.error); // 型安全にエラー処理
+}
+```
+
+**設計上の判断:**
+
+- **Handled Error（Result型）**: レート制限、不正なクエリなど、復旧可能なエラーは `ErrorView` コンポーネントで表示
+- **Unhandled Error（throw）**: 予期しないエラーは `error.tsx` でキャッチしてフォールバック表示
+
+#### ポイント3.2 エラーメッセージの一元管理
 
 `errorMessages.ts`でAPIエラーメッセージを定数として一元管理し、コード全体での一貫性を確保しています。
 
-#### ポイント3.2 エラーViewModelへの変換
+#### ポイント3.3 エラーViewModelへの変換
 
 `getErrorViewModel`関数でAPIエラーをユーザー向けの表示情報に変換しています。各エラーに対して以下を定義
 
@@ -207,7 +325,7 @@ Next.js App Routerの `error.tsx` を活用し、エラー発生時のユーザ�
 <div className="flex flex-col items-center gap-4 py-12">
   <p>{error.message}</p>
   <h2>{displayMessage}</h2>
-  <Button onClick={() => reset()}>Retry</Button>
+  <Button onClick={() => reset()}>リトライ</Button>
 </div>
 ```
 
@@ -215,11 +333,12 @@ Next.js App Routerの `error.tsx` を活用し、エラー発生時のユーザ�
 
 本プロジェクトでは、責務ごとにテスト対象を分離しています。
 
-| テスト種別     | 対象                                                         | ツール                  |
-| -------------- | ------------------------------------------------------------ | ----------------------- |
-| Unit Test      | API通信、runtime validation、データ変換、エラーハンドリング  | Vitest, MSW             |
-| Component Test | Presentationコンポーネントの表示ロジック                     | Vitest, Testing Library |
-| E2E Test       | 検索・詳細遷移・エラー表示などの主要導線、画面全体の動作保証 | Playwright（予定）      |
+| テスト種別       | 対象                                                         | ツール                  |
+| ---------------- | ------------------------------------------------------------ | ----------------------- |
+| Unit Test        | runtime validation、データ変換、ユーティリティ関数           | Vitest                  |
+| Integration Test | Service層（API通信 + バリデーション + データ整形の結合）     | Vitest, MSW             |
+| Component Test   | Presentationコンポーネントの表示ロジック                     | Vitest, Testing Library |
+| E2E Test         | 検索・詳細遷移・エラー表示などの主要導線、画面全体の動作保証 | Playwright              |
 
 ### テスト方針
 
@@ -240,12 +359,80 @@ Next.js公式ドキュメントでは、Vitestはasync Server Componentを正式
 
 単体テスト時のAPI通信モックにMSWを使用しています。`src/test/msw/server.ts` でモックサーバーを定義し、テスト実行時にGitHub APIへのリクエストをインターセプトします。
 
+### Integration Test
+
+Service層のテストでは、API通信からデータ整形までを結合してテストしています。MSWでGitHub APIをモックし、実際のリクエストパラメータも検証しています。
+
+```typescript
+// getRepositories.integration.test.ts
+describe("getRepositories integration", () => {
+  it("GitHub APIレスポンスを取得して、アプリで使う形に整形できる", async () => {
+    server.use(
+      http.get("https://api.github.com/search/repositories", ({request}) => {
+        const url = new URL(request.url);
+        // リクエストパラメータの検証
+        expect(url.searchParams.get("q")).toBe("react in:name");
+        expect(url.searchParams.get("page")).toBe("1");
+        return HttpResponse.json(mockApiResponse);
+      })
+    );
+
+    await expect(getRepositories("react", 1, 30)).resolves.toEqual({
+      ok: true,
+      data: expectedResult,
+    });
+  });
+});
+```
+
+### E2E Test
+
+Playwrightを使用して、ユーザー操作を含む主要導線をテストしています。
+
+```typescript
+// search.spec.ts
+test("リポジトリ検索ができる", async ({page}) => {
+  await page.goto("/search");
+  await page.getByRole("textbox").fill("react");
+  await page.getByRole("button", {name: "検索"}).click();
+
+  await expect
+    .poll(() => new URL(page.url()).searchParams.get("q"))
+    .toBe("react");
+  await expect(page.getByText("facebook/react")).toBeVisible();
+});
+
+test("存在しないリポジトリでエラー表示される", async ({page}) => {
+  await page.goto("/search");
+  await page.getByRole("textbox").fill("0123456789XXXXXXXXXX");
+  await page.getByRole("button", {name: "検索"}).click();
+
+  await expect(
+    page.getByText("リポジトリが見つかりませんでした。")
+  ).toBeVisible();
+});
+```
+
 ### テストファイルの配置
 
-コンポーネントのテストファイルはテスト対象と同じディレクトリに配置し、`*.test.tsx` の命名規則に従います。
+コンポーネント、単体テストのテストファイルはテスト対象と同じディレクトリに配置し、`*.test.tsx` の命名規則に従います。
 
 ```txt
 components/
 ├── ComponentName.tsx
 └── ComponentName.test.tsx
+```
+
+一方e2eテストは `src/test/e2e/` 配下に `app/` と同じ階層構造を再現しページごとのテストファイル `*.spec.tsx` を作成しています。
+
+`app/` 配下にルーティングに関連しないファイルを置かないために分けることを意識しています。
+
+```txt
+test/
+  └──e2e/
+      └──root.spec.tsx
+      ├── search/
+      |   └──search.spec.tsx
+      └── repo/slug/
+                └──repoDetail.spec.tsx
 ```
