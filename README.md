@@ -377,7 +377,7 @@ describe("getRepositories integration", () => {
       })
     );
 
-    await expect(getRepositories("react", 1, 30)).resolves.toEqual({
+    await expect(getRepositories(12, "react", 1)).resolves.toEqual({
       ok: true,
       data: expectedResult,
     });
